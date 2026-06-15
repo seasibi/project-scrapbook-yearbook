@@ -18,7 +18,7 @@ function chunk<T>(items: T[], size: number): T[][] {
 
 /**
  * The flippable book. When Canva page exports exist in
- * public/yearbook-pages/ (1.png, 2.png, …) the book shows those images —
+ * public/yearbook-pages/ (1.png, 2.png, ...) the book shows those images --
  * page 1 as the front cover, the last page as the back. Until then it
  * falls back to the generated student spreads.
  */
@@ -73,9 +73,9 @@ export default function YearbookFlipbook({
           : [
               <YearbookPage variant="cover" key="cover">
                 <div className="cover-inner">
-                  <span className="cover-bow" aria-hidden="true">🎀</span>
+                  <span className="cover-bow" aria-hidden="true">&#x1F380;</span>
                   <h3 className="cover-title">The Archive</h3>
-                  <p className="cover-sub pixel-font">✦ scrapbook edition ✦</p>
+                  <p className="cover-sub pixel-font">&#x2726; scrapbook edition &#x2726;</p>
                   <p className="cover-year">2026</p>
                 </div>
               </YearbookPage>,
@@ -87,7 +87,7 @@ export default function YearbookFlipbook({
               ...spreads.map((group, i) => (
                 <YearbookPage key={i}>
                   <div className="spread-header pixel-font">
-                    the graduates · {i + 1} of {spreads.length}
+                    the graduates &middot; {i + 1} of {spreads.length}
                   </div>
                   <div className="spread-grid">
                     {group.map((student) => (
@@ -96,11 +96,10 @@ export default function YearbookFlipbook({
                           <StudentAvatar student={student} size={88} />
                         </div>
                         <figcaption>
-                          <span className="spread-name pixel-font">
-                            {student.fullName}
-                          </span>
-                          <span className="spread-nick">“{student.nickname}”</span>
-                          <span className="spread-quote">{student.quote}</span>
+                          <span className="spread-name pixel-font">{student.lastName.toUpperCase()}</span>
+                          <span className="spread-name-first">{student.firstName} {student.middleName}</span>
+                          <span className="spread-nick">&ldquo;{student.nickname}&rdquo;</span>
+                          <span className="spread-quote">{student.motto}</span>
                         </figcaption>
                       </figure>
                     ))}
@@ -112,7 +111,7 @@ export default function YearbookFlipbook({
                 <div className="cover-inner">
                   <h3 className="cover-fin">Fin.</h3>
                   <p className="cover-farewell">
-                    Until the next chapter — wherever it finds us.
+                    Until the next chapter &mdash; wherever it finds us.
                   </p>
                 </div>
               </YearbookPage>,
@@ -120,7 +119,7 @@ export default function YearbookFlipbook({
       </HTMLFlipBook>
 
       <p className="flipbook-counter pixel-font">
-        page {Math.min(page + 1, totalPages)} of {totalPages} · click or drag a
+        page {Math.min(page + 1, totalPages)} of {totalPages} &middot; click or drag a
         corner to flip
       </p>
     </div>

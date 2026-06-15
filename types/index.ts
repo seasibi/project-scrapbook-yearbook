@@ -1,8 +1,12 @@
 export interface Student {
   id: number;
   fullName: string;
+  firstName: string;
+  lastName: string;
+  middleName: string;
   nickname: string;
   quote: string;
+  motto: string;
   birthday: string;
   instagram: string;
   color: string;

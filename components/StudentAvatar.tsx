@@ -1,16 +1,11 @@
+"use client";
+
+import { useState } from "react";
 import type { Student } from "@/types";
 
-/**
- * Generated SVG portrait: a soft color-blocked placeholder unique to each
- * student (their color + first initial), framed by the parent polaroid.
- */
-export default function StudentAvatar({
-  student,
-  size = 120,
-}: {
-  student: Student;
-  size?: number;
-}) {
+const EXTS = ["jpg", "JPG", "jpeg", "JPEG", "png", "PNG", "webp"];
+
+function Placeholder({ student, size }: { student: Student; size: number }) {
   const initial = student.fullName.charAt(0).toUpperCase();
   return (
     <svg
@@ -19,7 +14,7 @@ export default function StudentAvatar({
       height={size}
       role="img"
       aria-label={`Portrait of ${student.fullName}`}
-      style={{ display: "block", width: "100%", height: "auto" }}
+      style={{ display: "block", width: "100%", height: "100%" }}
     >
       <rect width="100" height="100" fill={student.color} opacity="0.18" />
       <circle cx="50" cy="38" r="17" fill={student.color} opacity="0.55" />
@@ -41,5 +36,33 @@ export default function StudentAvatar({
         {initial}
       </text>
     </svg>
+  );
+}
+
+/**
+ * Shows the student's graduation photo from /portraits/<id>.<ext> if present,
+ * tries jpg, JPG, jpeg, JPEG, png, PNG, webp in order, then falls back to SVG.
+ */
+export default function StudentAvatar({
+  student,
+  size = 120,
+}: {
+  student: Student;
+  size?: number;
+}) {
+  const [extIndex, setExtIndex] = useState(0);
+
+  if (extIndex >= EXTS.length) return <Placeholder student={student} size={size} />;
+
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={`/portraits/${student.id}.${EXTS[extIndex]}`}
+      alt={`Portrait of ${student.fullName}`}
+      width={size}
+      height={size}
+      style={{ display: "block", width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }}
+      onError={() => setExtIndex((i) => i + 1)}
+    />
   );
 }

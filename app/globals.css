@@ -836,6 +836,12 @@ body.js-ready .reveal:not(.visible) .stop-letter {
   display: block;
 }
 
+.spread-name-first {
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  display: block;
+}
+
 .spread-nick {
   font-family: var(--font-serif), Georgia, serif;
   font-style: italic;
@@ -935,36 +941,40 @@ body.js-ready .reveal:not(.visible) .stop-letter {
   background: var(--card);
   border: 1px solid var(--card-border);
   margin-bottom: 10px;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
 }
 
-.portrait-name {
+.portrait-lastname {
   margin: 0;
-  font-family: var(--font-serif), Georgia, serif;
+  font-family: var(--font-serif-sc), Georgia, serif;
   font-size: 1.08rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.portrait-firstname {
+  margin: 2px 0 0;
+  font-family: var(--font-baskerville), Georgia, serif;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
 }
 
 .portrait-nick {
-  margin: 2px 0 10px;
-  font-family: var(--font-serif), Georgia, serif;
-  font-style: italic;
+  margin: 8px 0 0;
+  font-family: var(--font-pixel), monospace;
   color: var(--accent);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 }
 
-.portrait-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  align-items: center;
-}
-
-.meta-tag {
-  font-size: 0.85rem;
+.portrait-motto {
+  margin: 8px 0 0;
+  font-size: 0.78rem;
   color: var(--ink-soft);
-  background: var(--card);
-  border: 1px solid var(--card-border);
-  border-radius: 999px;
-  padding: 2px 10px;
+  font-style: italic;
+  font-family: var(--font-baskerville), Georgia, serif;
+  line-height: 1.4;
 }
 
 /* ── gallery (cinematic long-scroll collage chapters) ────── */

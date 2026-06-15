@@ -21,7 +21,7 @@ const YearbookFlipbook = dynamic(() => import("@/components/YearbookFlipbook"), 
   loading: () => <p className="pixel-font flicker flipbook-loading">opening the book…</p>,
 });
 
-const MEMORY_WORDS = ["Prom.", "Finals.", "Retreat.", "Friends.", "Class of 2026."];
+const MEMORY_WORDS = ["Enrollments.", "Midterms.", "Finals.", "Alaya", "Capstone.", "Friends.", "Class of 2026."];
 
 const NAV = [
   { id: "yearbook", label: "yearbook" },
@@ -179,11 +179,11 @@ function ShellContent({
 
           {/* ── portraits ─────────────────────────────── */}
           <section className="section" id="portraits">
-            <div className="section-label reveal" data-anim="slideLeft">
-              <RansomText text="portraits" seed={17} className="ransom-small" />
+            <div className="section-label section-label--center reveal">
+              <RansomImageText text="portraits" seed={17} className="ransom-img--label" intro={false} />
             </div>
-            <p className="section-sub pixel-font reveal">
-              all thirty of us, in alphabetical order of chaos
+            <p className="section-sub section-sub--center pixel-font reveal">
+              all twenty-six of us, in alphabetical order of chaos
             </p>
             <PortraitsTab initial={students} />
           </section>

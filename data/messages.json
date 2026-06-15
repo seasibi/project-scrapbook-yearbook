@@ -1,10 +1,1 @@
-[
-  { "id": "seed-1", "fromName": "Sofia Herrera",    "fromNick": "Sof",    "toName": "everyone",          "message": "We were never just classmates. Thank you for four years of borrowed notes, shared lunches, and the kind of laughter that made the guards check on us. I love you all.", "createdAt": "2026-05-01T09:00:00Z" },
-  { "id": "seed-2", "fromName": "Gabriel Santos",   "fromNick": "Gab",    "toName": "Section Emerald",   "message": "To the loudest section in the building — sorry to every teacher, and thank you to every one of you. See you at the reunion, first round of milk tea is on me.", "createdAt": "2026-05-02T14:30:00Z" },
-  { "id": "seed-3", "fromName": "Hannah Villanueva","fromNick": "Han",    "toName": "Jules",             "message": "You held my hand through every quiz I thought would end me. There's no version of these four years without you in it. Best seatmate, best friend, forever.", "createdAt": "2026-05-04T19:12:00Z" },
-  { "id": "seed-4", "fromName": "Joaquin Dela Rosa","fromNick": "Wacky",  "toName": "the basketball team","message": "We never won the championship but we won every halftime. Proud of every bruise. Once a teammate, always a brother.", "createdAt": "2026-05-07T08:45:00Z" },
-  { "id": "seed-5", "fromName": "Katrina Salazar",  "fromNick": "Kat",    "toName": "Ma'am Reyes",       "message": "You believed I could write before I did. Every page of this yearbook exists a little bit because of you. Thank you for everything.", "createdAt": "2026-05-10T11:20:00Z" },
-  { "id": "seed-6", "fromName": "Lorenzo Aquino",   "fromNick": "Enzo",   "toName": "the lunch table",   "message": "Same spot, same chaos, every single day. If I could enroll again just for lunch period, I would. Keep my seat warm.", "createdAt": "2026-05-13T16:05:00Z" },
-  { "id": "seed-7", "fromName": "Valentina Garcia", "fromNick": "Val",    "toName": "Class of 2026",     "message": "We started as strangers in face masks and ended as a family. Whatever happens next, we already did the hard part together.", "createdAt": "2026-05-18T10:10:00Z" },
-  { "id": "seed-8", "fromName": "Zoe Mercado",      "fromNick": "Zee",    "toName": "future us",         "message": "Hey. It's us, from the last week of high school. Hope you kept in touch. Hope you're happy. Hope you still remember the dance steps. — Z", "createdAt": "2026-05-22T21:40:00Z" }
-]
+[]

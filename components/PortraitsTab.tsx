@@ -41,7 +41,7 @@ export default function PortraitsTab({ initial }: { initial: Student[] }) {
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="search a name, nickname, or @handle…"
+            placeholder="search a name, nickname, or @handle&hellip;"
             className="search-input pixel-font"
             aria-label="Search portraits"
           />
@@ -52,7 +52,7 @@ export default function PortraitsTab({ initial }: { initial: Student[] }) {
               onClick={() => setQuery("")}
               aria-label="Clear search"
             >
-              ✕
+              &#x2715;
             </button>
           )}
         </div>
@@ -76,16 +76,14 @@ export default function PortraitsTab({ initial }: { initial: Student[] }) {
             <div className="portrait-frame">
               <StudentAvatar student={student} />
             </div>
-            <h3 className="portrait-name">{student.fullName}</h3>
-            <p className="portrait-nick">“{student.nickname}”</p>
-            <div className="portrait-meta pixel-font">
-              <span className="meta-tag">🎂 {student.birthday}</span>
-              <span className="meta-tag">{student.instagram}</span>
-            </div>
+            <p className="portrait-lastname">{student.lastName.toUpperCase()}</p>
+            <p className="portrait-firstname">{student.firstName} {student.middleName}</p>
+            <p className="portrait-nick">&ldquo;{student.nickname}&rdquo;</p>
+            <p className="portrait-motto">{student.motto}</p>
           </article>
         ))}
         {students.length === 0 && (
-          <p className="empty-note pixel-font">no portraits match “{query}”</p>
+          <p className="empty-note pixel-font">no portraits match &ldquo;{query}&rdquo;</p>
         )}
       </div>
     </div>
