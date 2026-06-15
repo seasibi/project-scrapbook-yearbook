@@ -195,6 +195,16 @@ body.js-ready .reveal.visible {
   animation: bowBounce 2.2s ease-in-out infinite;
 }
 
+.gate-eyebrow {
+  margin: 0;
+  font-size: 0.75rem;
+  font-family: var(--font-pixel), monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--ink-soft);
+  animation: fadeDown 0.6s ease both;
+}
+
 .gate-kicker {
   margin: 0;
   font-size: 1.05rem;
@@ -247,6 +257,7 @@ body.js-ready .reveal.visible {
 
 .gate-label {
   font-size: 0.72rem;
+  font-family: var(--font-pixel), monospace;
   text-transform: uppercase;
   letter-spacing: 0.18em;
   color: var(--ink-soft);

@@ -74,8 +74,9 @@ export default function CountdownGate({ children }: { children: ReactNode }) {
 
   return (
     <div className="countdown-gate">
-      <p className="gate-kicker pixel-font">class of 2026 · batch memoranda</p>
-      <h1 className="gate-title">The Archive</h1>
+      <p className="gate-eyebrow pixel-font">class of 2026</p>
+      <h1 className="gate-title">thank u, next &lt;3</h1>
+      <p className="gate-kicker pixel-font">i&#39;m so f*cking grateful</p>
       <p className="gate-sub pixel-font">unlocks on july 3, 2026</p>
 
       {timeLeft && (
