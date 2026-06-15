@@ -1,0 +1,14 @@
+[
+  { "id": 1,  "title": "Foundation Day Parade",  "category": "events",     "year": "2023", "tone": "#b8b0a4" },
+  { "id": 2,  "title": "Intramurals Finals",     "category": "sports",     "year": "2024", "tone": "#a4adb8" },
+  { "id": 3,  "title": "Christmas Party",        "category": "socials",    "year": "2024", "tone": "#b8a4a4" },
+  { "id": 4,  "title": "Science Fair Champs",    "category": "academic",   "year": "2025", "tone": "#a4b8ad" },
+  { "id": 5,  "title": "Prom Night",             "category": "socials",    "year": "2025", "tone": "#b0a4b8" },
+  { "id": 6,  "title": "Basketball League",      "category": "sports",     "year": "2025", "tone": "#b8b4a4" },
+  { "id": 7,  "title": "Field Trip — Museum",    "category": "events",     "year": "2024", "tone": "#a4b0b8" },
+  { "id": 8,  "title": "Quiz Bee Victory",       "category": "academic",   "year": "2024", "tone": "#adb8a4" },
+  { "id": 9,  "title": "100 Days Countdown",     "category": "milestones", "year": "2026", "tone": "#b8a4b0" },
+  { "id": 10, "title": "Last First Day",         "category": "milestones", "year": "2025", "tone": "#b4b8a4" },
+  { "id": 11, "title": "Battle of the Bands",    "category": "events",     "year": "2025", "tone": "#a4a8b8" },
+  { "id": 12, "title": "Graduation Practice",    "category": "milestones", "year": "2026", "tone": "#b8ada4" }
+]
