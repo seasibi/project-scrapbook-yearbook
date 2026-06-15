@@ -32,19 +32,24 @@ async function initTables(db: Client): Promise<void> {
         created_at TEXT DEFAULT (datetime('now'))
       )`,
       `CREATE TABLE IF NOT EXISTS stickers (
-        id         INTEGER PRIMARY KEY AUTOINCREMENT,
-        sticker_id TEXT NOT NULL,
-        x_pct      REAL NOT NULL,
-        y_pct      REAL NOT NULL,
-        rotation   REAL NOT NULL DEFAULT 0,
-        scale      REAL NOT NULL DEFAULT 1,
-        section    TEXT NOT NULL DEFAULT 'page',
-        placed_by  TEXT NOT NULL,
-        created_at TEXT DEFAULT (datetime('now'))
+        id           INTEGER PRIMARY KEY AUTOINCREMENT,
+        sticker_id   TEXT NOT NULL,
+        x_pct        REAL NOT NULL,
+        y_pct        REAL NOT NULL,
+        rotation     REAL NOT NULL DEFAULT 0,
+        scale        REAL NOT NULL DEFAULT 1,
+        section      TEXT NOT NULL DEFAULT 'page',
+        placed_by    TEXT NOT NULL,
+        text_content TEXT DEFAULT NULL,
+        text_font    TEXT NOT NULL DEFAULT 'pixel',
+        created_at   TEXT DEFAULT (datetime('now'))
       )`,
     ],
     "write"
   );
+  // migrations for existing databases — SQLite ignores the error if column exists
+  try { await db.execute("ALTER TABLE stickers ADD COLUMN text_content TEXT DEFAULT NULL"); } catch {}
+  try { await db.execute("ALTER TABLE stickers ADD COLUMN text_font TEXT NOT NULL DEFAULT 'pixel'"); } catch {}
 }
 
 /** Returns the shared LibSQL client; creates tables on first call. */

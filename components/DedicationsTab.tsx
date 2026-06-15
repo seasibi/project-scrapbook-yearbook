@@ -140,7 +140,7 @@ export default function DedicationsTab() {
       </div>
 
       {/* ── the panel ────────────────────────────────── */}
-      <aside className="dedications-panel reveal">
+      <aside className="dedications-panel reveal" id="dedications-panel">
         <span className="tape-strip" aria-hidden="true" />
 
         {loading ? (
@@ -191,13 +191,16 @@ export default function DedicationsTab() {
               {mode === "register" && (
                 <>
                   <label className="field-label pixel-font" htmlFor="reg-name">
-                    full name (as printed in the yearbook)
+                    full name
                   </label>
+                  <p className="field-note pixel-font">
+                    firstname middlename lastname — exactly as in the yearbook
+                  </p>
                   <input
                     id="reg-name"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    placeholder="e.g. Sofia Herrera"
+                    placeholder="e.g. Hannah Lei Holt Angeles"
                     required
                   />
                 </>
@@ -252,7 +255,7 @@ export default function DedicationsTab() {
                 : "already registered? sign in"}
             </button>
             <p className="panel-note">
-              One account per graduate — your name must match the yearbook list.
+              One account per graduate. Your full name must match the yearbook exactly — Firstname Middlename Lastname.
             </p>
           </>
         )}

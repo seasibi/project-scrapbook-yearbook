@@ -919,8 +919,14 @@ body.js-ready .reveal:not(.visible) .stop-letter {
 
 .portraits-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 28px 20px;
+}
+@media (max-width: 900px) {
+  .portraits-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 600px) {
+  .portraits-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 .portrait-card {
@@ -1570,6 +1576,13 @@ body.js-ready .gallery-chapter:not([data-animated="true"]) + .gallery-divider .g
   color: var(--ink-soft);
   margin-top: 8px;
 }
+.field-note {
+  font-size: 0.68rem;
+  color: var(--ink-soft);
+  opacity: 0.75;
+  margin: 1px 0 2px;
+  line-height: 1.3;
+}
 
 .panel-form input,
 .panel-form textarea {
@@ -1655,6 +1668,11 @@ body.js-ready .gallery-chapter:not([data-animated="true"]) + .gallery-divider .g
   cursor: default;
   filter: drop-shadow(1px 2px 2px var(--paper-shadow));
 }
+.placed-sticker.is-text {
+  width: auto;
+  height: auto;
+  max-width: 200px;
+}
 .placed-sticker svg {
   width: 100%;
   height: 100%;
@@ -1664,7 +1682,36 @@ body.js-ready .gallery-chapter:not([data-animated="true"]) + .gallery-divider .g
   animation: stickerLand 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 .placed-sticker.mine {
-  cursor: pointer;
+  cursor: grab;
+}
+.placed-sticker.mine.is-dragging {
+  cursor: grabbing;
+  z-index: 310;
+  filter: drop-shadow(2px 4px 8px var(--paper-shadow));
+}
+
+/* hover tooltip via data-tip attribute */
+.placed-sticker::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 5px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-pixel), monospace;
+  font-size: 0.55rem;
+  line-height: 1;
+  padding: 3px 7px;
+  border-radius: 3px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 1;
+  transition: opacity 0.15s ease;
+}
+.placed-sticker:hover::after {
+  opacity: 1;
 }
 
 .sticker-x {
@@ -1679,11 +1726,86 @@ body.js-ready .gallery-chapter:not([data-animated="true"]) + .gallery-divider .g
   background: var(--accent-strong);
   color: #fff;
   border-radius: 50%;
+  cursor: pointer;
   opacity: 0;
   transition: opacity 0.2s ease;
+  user-select: none;
 }
 .placed-sticker.mine:hover .sticker-x {
   opacity: 0.85;
+}
+
+/* resize handle — bottom-right corner, drag up = bigger */
+.sticker-resize {
+  position: absolute;
+  bottom: -5px;
+  right: -5px;
+  width: 13px;
+  height: 13px;
+  background: var(--accent);
+  border: 1.5px solid var(--paper);
+  border-radius: 50%;
+  cursor: nwse-resize;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.placed-sticker.mine:hover .sticker-resize {
+  opacity: 0.8;
+}
+
+/* upload sticker */
+.placed-sticker.is-upload {
+  width: 80px;
+  height: 80px;
+}
+.sticker-upload-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  border-radius: 3px;
+  pointer-events: none;
+}
+
+/* upload tray UI */
+.upload-file-input {
+  display: none;
+}
+.upload-preview-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.upload-preview-img {
+  max-width: 100px;
+  max-height: 100px;
+  object-fit: contain;
+  border: 1px solid var(--card-border);
+  border-radius: 4px;
+  background: repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%) 0 0 / 10px 10px;
+}
+.upload-clear {
+  font-size: 0.68rem;
+  color: var(--ink-soft);
+}
+
+/* text sticker content */
+.sticker-text-pixel {
+  font-family: var(--font-pixel), monospace;
+  font-size: 1rem;
+  color: var(--ink);
+  white-space: nowrap;
+  display: block;
+  padding: 2px 4px;
+}
+.sticker-text-ransom {
+  display: block;
+}
+
+/* sticker layer pointer-event activation while moving */
+.sticker-layer.is-moving {
+  pointer-events: auto;
 }
 
 .sticker-fab-zone {
@@ -1720,6 +1842,11 @@ body.js-ready .gallery-chapter:not([data-animated="true"]) + .gallery-divider .g
   border: 1px dashed var(--card-border);
   border-radius: 999px;
   opacity: 0.75;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+.sticker-ghost-hint:hover {
+  opacity: 1;
 }
 
 .sticker-tray {
@@ -1789,6 +1916,38 @@ body.js-ready .gallery-chapter:not([data-animated="true"]) + .gallery-divider .g
   font-size: 0.85rem;
   color: var(--ink-soft);
   text-align: center;
+}
+
+.tray-text-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 4px 0;
+}
+.tray-text-input {
+  padding: 7px 10px;
+  border: 1px solid var(--card-border);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 0.78rem;
+  border-radius: 3px;
+  outline: none;
+}
+.tray-text-input:focus {
+  border-color: var(--accent);
+}
+.tray-font-choice {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+}
+.tray-font-choice label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
 }
 
 /* ── pdf download section ────────────────────────────────── */

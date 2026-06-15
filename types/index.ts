@@ -69,6 +69,8 @@ export interface PlacedSticker {
   scale: number;
   section: string;
   placedBy: string;
+  textContent?: string;
+  textFont?: "pixel" | "ransom";
   createdAt: string;
 }
 
