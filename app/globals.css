@@ -363,8 +363,26 @@ body.js-ready .reveal.visible {
 }
 
 .topbar-brand {
-  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   white-space: nowrap;
+}
+
+.topbar-brand-icon {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.topbar-letter-img {
+  height: 2rem;
+  width: auto;
+  object-fit: contain;
+}
+
+.topbar-brand-name {
+  font-size: 1.3rem;
 }
 
 .topbar-nav {
@@ -1996,8 +2014,11 @@ body.js-ready .gallery-chapter:not([data-animated="true"]) + .gallery-divider .g
     padding-top: 8px;
     padding-bottom: 8px;
   }
-  .topbar-brand {
+  .topbar-brand-name {
     font-size: 1.05rem;
+  }
+  .topbar-letter-img {
+    height: 1.6rem;
   }
   .topbar-link {
     font-size: 0.78rem;

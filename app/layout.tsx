@@ -28,9 +28,12 @@ const pressStart = Press_Start_2P({
 });
 
 export const metadata: Metadata = {
-  title: "The Archive — Class of 2026",
+  title: "Batch 26",
   description:
     "Interactive digital yearbook for the Class of 2026 — portraits, gallery, dedications, and a flipbook you can actually flip.",
+  icons: {
+    icon: "/letters/i.png",
+  },
 };
 
 export default function RootLayout({

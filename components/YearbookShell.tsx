@@ -97,7 +97,15 @@ function ShellContent({
     <div className="shell" ref={mainRef}>
           {/* ── sticky topbar ─────────────────────────── */}
           <header className="topbar">
-            <span className="topbar-brand pixel-font">The Archive ✦</span>
+            <span className="topbar-brand">
+              <span className="topbar-brand-icon">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/letters/i.png" alt="" aria-hidden="true" className="topbar-letter-img" />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/letters/t.png" alt="" aria-hidden="true" className="topbar-letter-img" />
+              </span>
+              <span className="topbar-brand-name pixel-font">Batch 26</span>
+            </span>
             <nav className="topbar-nav" aria-label="Sections">
               {NAV.map((item) => (
                 <a
@@ -215,7 +223,7 @@ function ShellContent({
           {/* ── footer ────────────────────────────────── */}
           <footer className="footer">
             <span className="pixel-font">made with &lt;3 · class of 2026</span>
-            <span className="footer-fin">The Archive · fin.</span>
+            <span className="footer-fin">Batch 26 · fin.</span>
           </footer>
 
       <StickerLayer />
