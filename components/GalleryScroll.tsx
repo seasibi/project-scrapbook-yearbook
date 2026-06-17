@@ -47,42 +47,63 @@ interface Chapter {
 const CHAPTERS: Chapter[] = [
   {
     id: "1",
+    // Row 1 (top): filmstrip · img5 · img6 (large) · img7
+    // Mid-left: img28 (large, under filmstrip+img5)
+    // Right column (below img7): img29 · img30 stacked
+    // Row 2 (bottom ~62%): img18 · img19 · img20
     pieces: [
-      { label: "img1", kind: "filmstrip", x: 1, y: 2, w: 14, rot: 0, frames: ["img1", "img2", "img3", "img4"] },
-      { label: "img5", kind: "polaroid", x: 19, y: 14, w: 24, rot: -4, tape: "plain" },
-      { label: "img6", kind: "photo", x: 32, y: 2, w: 62, rot: 3 },
-      { label: "img7", kind: "polaroid", x: 60, y: 42, w: 21, rot: -2, tape: "plain" },
+      { label: "img1",  kind: "filmstrip", x: 0,  y: 0,  w: 11, rot: 0,  frames: ["img1","img2","img3","img4"] },
+      { label: "img5",  kind: "polaroid",  x: 13, y: 5,  w: 21, rot: -4, tape: "plain" },
+      { label: "img6",  kind: "photo",     x: 32, y: 0,  w: 42, rot: 2 },
+      { label: "img7",  kind: "polaroid",  x: 75, y: 3,  w: 22, rot: -2, tape: "plain" },
+      { label: "img28", kind: "photo",     x: 0,  y: 43, w: 34, rot: -1 },
+      { label: "img29", kind: "polaroid",  x: 76, y: 26, w: 21, rot: 2 },
+      { label: "img30", kind: "polaroid",  x: 76, y: 48, w: 21, rot: -2 },
+      { label: "img18", kind: "polaroid",  x: 1,  y: 62, w: 27, rot: 3 },
+      { label: "img19", kind: "polaroid",  x: 31, y: 64, w: 28, rot: -2, tape: "plain" },
+      { label: "img20", kind: "polaroid",  x: 59, y: 62, w: 25, rot: 4 },
     ],
     doodles: [
-      { label: "scrap1", x: 86, y: 26, w: 13, rot: 6 },
-      { label: "scrap2", x: 47, y: 0, w: 22, rot: -2 },
-      { label: "scrap3", x: 73, y: 22, w: 6, rot: 8 },
+      { label: "scrap1", x: 91, y: 25, w: 7, rot: 6 },
+      { label: "scrap2", x: 28, y: 88, w: 8, rot: 3 },
+      { label: "scrap3", x: 62, y: 87, w: 7, rot: -4 },
     ],
   },
   {
     id: "2",
+    // Row 1 (top): img8 · img9 · img10 · img11
+    // Row 2 (bottom ~46%): img21 · img22 · img23
     pieces: [
-      { label: "img8", kind: "polaroid", x: 2, y: 4, w: 20, rot: -3, tape: "plain" },
-      { label: "img9", kind: "photo", x: 17, y: 36, w: 24, rot: 2, clip: true },
-      { label: "img10", kind: "polaroid", x: 44, y: 14, w: 30, rot: 0 },
-      { label: "img11", kind: "note", x: 76, y: 10, w: 22, rot: 3 },
+      { label: "img8",  kind: "polaroid", x: 1,  y: 3,  w: 23, rot: -3, tape: "plain" },
+      { label: "img9",  kind: "photo",    x: 26, y: 5,  w: 26, rot: 2,  clip: true },
+      { label: "img10", kind: "polaroid", x: 54, y: 2,  w: 24, rot: -1 },
+      { label: "img11", kind: "note",     x: 79, y: 5,  w: 19, rot: 3 },
+      { label: "img21", kind: "polaroid", x: 1,  y: 46, w: 27, rot: 2 },
+      { label: "img22", kind: "photo",    x: 31, y: 44, w: 32, rot: -2 },
+      { label: "img23", kind: "polaroid", x: 68, y: 46, w: 28, rot: 3 },
     ],
     doodles: [
-      { label: "scrap4", x: 36, y: 8, w: 12, rot: -8 },
-      { label: "scrap5", x: 1, y: 66, w: 9, rot: -6 },
-      { label: "scrap6", x: 35, y: 62, w: 8, rot: -10 },
+      { label: "scrap4", x: 4,  y: 84, w: 9, rot: 4 },
+      { label: "scrap5", x: 42, y: 85, w: 8, rot: -5 },
+      { label: "scrap6", x: 74, y: 83, w: 9, rot: 6 },
     ],
   },
   {
     id: "3",
+    // Row 1 (top): img12 · img13 · img24 · filmstrip
+    // Row 2 (bottom ~46%): img25 · img26 · img27
     pieces: [
-      { label: "img12", kind: "polaroid", x: 15, y: 16, w: 21, rot: -5, tape: "heart" },
-      { label: "img13", kind: "polaroid", x: 42, y: 6, w: 31, rot: 6, tape: "plain" },
-      { label: "img14", kind: "filmstrip", x: 85, y: 0, w: 14, rot: 0, frames: ["img14", "img15", "img16", "img17"] },
+      { label: "img12", kind: "polaroid",  x: 1,  y: 3,  w: 23, rot: -4, tape: "heart" },
+      { label: "img13", kind: "polaroid",  x: 27, y: 0,  w: 31, rot: 4,  tape: "plain" },
+      { label: "img24", kind: "polaroid",  x: 60, y: 3,  w: 23, rot: -2 },
+      { label: "img14", kind: "filmstrip", x: 85, y: 0,  w: 12, rot: 0,  frames: ["img14","img15","img16","img17"] },
+      { label: "img25", kind: "photo",     x: 1,  y: 46, w: 30, rot: 2 },
+      { label: "img26", kind: "polaroid",  x: 34, y: 48, w: 27, rot: -3, tape: "plain" },
+      { label: "img27", kind: "polaroid",  x: 66, y: 46, w: 29, rot: 2 },
     ],
     doodles: [
-      { label: "scrap7", x: 76, y: 0, w: 9, rot: -8 },
-      { label: "scrap8", x: 10, y: 66, w: 11, rot: 4 },
+      { label: "scrap7", x: 22, y: 84, w: 9, rot: -4 },
+      { label: "scrap8", x: 55, y: 85, w: 9, rot: 5 },
     ],
   },
 ];

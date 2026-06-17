@@ -1033,7 +1033,7 @@ body.js-ready .reveal:not(.visible) .stop-letter {
 .chapter-canvas {
   position: relative;
   z-index: 1;
-  height: clamp(560px, 88vh, 880px);
+  height: clamp(900px, 130vh, 1300px);
 }
 
 .chapter-piece {
