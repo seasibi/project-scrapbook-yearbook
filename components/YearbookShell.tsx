@@ -194,7 +194,7 @@ function ShellContent({
               <RansomImageText text="gallery" seed={8} className="ransom-img--label" />
             </div>
             <p className="section-sub section-sub--center pixel-font reveal">
-              three chapters of memories — just keep scrolling
+              a wall of memories — just keep scrolling
             </p>
             <GalleryScroll />
           </section>

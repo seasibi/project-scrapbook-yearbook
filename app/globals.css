@@ -1182,15 +1182,12 @@ body.js-ready .reveal:not(.visible) .stop-letter {
   z-index: 1;
   pointer-events: none;
 }
-.chapter-doodle svg {
+.scrap-item-img {
   display: block;
   width: 100%;
   height: auto;
 }
-.doodle-washi {
-  z-index: 0;
-}
-/* small ornaments (bow, star, butterfly) perch on top of the photos */
+/* small ornaments perch on top of the photos */
 .doodle-bow,
 .doodle-star,
 .doodle-butterfly {
