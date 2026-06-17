@@ -14,7 +14,7 @@ import { Fragment, useEffect, useRef, useState } from "react";
  * in later by matching the label.
  */
 
-type PieceKind = "polaroid" | "photo" | "note" | "filmstrip";
+type PieceKind = "polaroid" | "photo" | "note" | "filmstrip" | "tiktok";
 type TapeKind = "plain" | "heart" | "gingham";
 
 interface Piece {
@@ -52,16 +52,17 @@ const CHAPTERS: Chapter[] = [
     // Right column (below img7): img29 · img30 stacked
     // Row 2 (bottom ~62%): img18 · img19 · img20
     pieces: [
-      { label: "img1",  kind: "filmstrip", x: 0,  y: 0,  w: 11, rot: 0,  frames: ["img1","img2","img3","img4"] },
-      { label: "img5",  kind: "polaroid",  x: 13, y: 5,  w: 21, rot: -4, tape: "plain" },
+      { label: "img1",  kind: "filmstrip", x: 0,  y: 0,  w: 16, rot: 0,  frames: ["img1","img2","img3","img4"] },
+      { label: "img5",  kind: "polaroid",  x: 18, y: 5,  w: 21, rot: -4, tape: "plain" },
       { label: "img6",  kind: "photo",     x: 32, y: 0,  w: 42, rot: 2 },
       { label: "img7",  kind: "polaroid",  x: 75, y: 3,  w: 22, rot: -2, tape: "plain" },
-      { label: "img28", kind: "photo",     x: 0,  y: 43, w: 34, rot: -1 },
+      { label: "img28", kind: "photo",     x: 0,  y: 44, w: 34, rot: -1 },
+      { label: "vid1",  kind: "tiktok",    x: 37, y: 35, w: 25, rot: 2 },
       { label: "img29", kind: "polaroid",  x: 76, y: 26, w: 21, rot: 2 },
       { label: "img30", kind: "polaroid",  x: 76, y: 48, w: 21, rot: -2 },
-      { label: "img18", kind: "polaroid",  x: 1,  y: 62, w: 27, rot: 3 },
-      { label: "img19", kind: "polaroid",  x: 31, y: 64, w: 28, rot: -2, tape: "plain" },
-      { label: "img20", kind: "polaroid",  x: 59, y: 62, w: 25, rot: 4 },
+      { label: "img18", kind: "polaroid",  x: 1,  y: 86, w: 27, rot: 3 },
+      { label: "img19", kind: "polaroid",  x: 31, y: 85, w: 28, rot: -2, tape: "plain" },
+      { label: "img20", kind: "polaroid",  x: 59, y: 84, w: 25, rot: 4 },
     ],
     doodles: [
       { label: "scrap1", x: 91, y: 25, w: 7, rot: 6 },
@@ -96,7 +97,7 @@ const CHAPTERS: Chapter[] = [
       { label: "img12", kind: "polaroid",  x: 1,  y: 3,  w: 23, rot: -4, tape: "heart" },
       { label: "img13", kind: "polaroid",  x: 27, y: 0,  w: 31, rot: 4,  tape: "plain" },
       { label: "img24", kind: "polaroid",  x: 60, y: 3,  w: 23, rot: -2 },
-      { label: "img14", kind: "filmstrip", x: 85, y: 0,  w: 12, rot: 0,  frames: ["img14","img15","img16","img17"] },
+      { label: "img14", kind: "filmstrip", x: 83, y: 0,  w: 16, rot: 0,  frames: ["img14","img15","img16","img17"] },
       { label: "img25", kind: "photo",     x: 1,  y: 46, w: 30, rot: 2 },
       { label: "img26", kind: "polaroid",  x: 34, y: 48, w: 27, rot: -3, tape: "plain" },
       { label: "img27", kind: "polaroid",  x: 66, y: 46, w: 29, rot: 2 },
@@ -143,6 +144,23 @@ function GalleryPhoto({ label }: { label: string }) {
         }}
       />
     </>
+  );
+}
+
+/** Drop vid1.mp4 (or .webm) into public/gallery/ to fill the TikTok frame. */
+function GalleryVideo({ label }: { label: string }) {
+  return (
+    <video
+      className="piece-real-photo"
+      autoPlay
+      muted
+      loop
+      playsInline
+      aria-label={label}
+    >
+      <source src={`/gallery/${label}.mp4`} type="video/mp4" />
+      <source src={`/gallery/${label}.webm`} type="video/webm" />
+    </video>
   );
 }
 
@@ -283,6 +301,10 @@ export default function GalleryScroll() {
                               <GalleryPhoto label={frame} />
                             </div>
                           ))}
+                        </div>
+                      ) : piece.kind === "tiktok" ? (
+                        <div className="piece-tiktok-screen">
+                          <GalleryVideo label={piece.label} />
                         </div>
                       ) : (
                         <div className="piece-photo-area">
