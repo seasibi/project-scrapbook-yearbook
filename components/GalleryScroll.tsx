@@ -269,23 +269,13 @@ export default function GalleryScroll() {
   return (
     <div className="gallery-scroll" ref={wrapRef}>
       <div className="gallery-chapters">
-        {CHAPTERS.map((chapter, i) => (
+        {CHAPTERS.map((chapter) => (
           <Fragment key={chapter.id}>
-            {i > 0 && (
-              <div className="gallery-divider" aria-hidden="true">
-                <span className="gallery-divider-mark">✦</span>
-              </div>
-            )}
             <section
               className="gallery-chapter"
               data-gallery-section={chapter.id}
               data-animated={animated.has(chapter.id) ? "true" : undefined}
             >
-              <span className="chapter-watermark" aria-hidden="true">
-                {chapter.number}
-              </span>
-              <h3 className="chapter-title">{chapter.label}</h3>
-
               <div className="chapter-canvas">
                 {chapter.pieces.map((piece, p) => (
                   <div

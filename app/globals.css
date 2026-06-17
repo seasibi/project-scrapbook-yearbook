@@ -1003,12 +1003,6 @@ body.js-ready .reveal:not(.visible) .stop-letter {
 
 .gallery-chapter {
   position: relative;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 28px;
-  padding: 60px 0;
 }
 
 /* watermark chapter number behind the grid */
