@@ -1102,13 +1102,28 @@ body.js-ready .reveal:not(.visible) .stop-letter {
   height: auto;
 }
 
+/* TEMPORARY filename badge — drop the matching photo into public/gallery/ */
 .piece-label {
   position: absolute;
   top: 6px;
-  right: 10px;
-  font-size: clamp(0.7rem, 1.2vw, 1rem);
-  color: var(--ink-soft);
-  letter-spacing: 0.08em;
+  left: 6px;
+  z-index: 5;
+  padding: 0.15em 0.5em;
+  border-radius: 0.4em;
+  background: rgba(20, 14, 8, 0.82);
+  color: #fff;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+  pointer-events: none;
+}
+.piece-label--tiktok {
+  top: auto;
+  bottom: 16cqw;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 /* tiktok / portrait video frame */
@@ -1376,8 +1391,9 @@ body.js-ready .reveal:not(.visible) .stop-letter {
 }
 .filmstrip-frame .piece-label {
   top: 4px;
-  right: 6px;
-  font-size: 0.68rem;
+  left: 4px;
+  font-size: 0.6rem;
+  padding: 0.1em 0.4em;
 }
 
 /* tape + paperclip accents on pieces */

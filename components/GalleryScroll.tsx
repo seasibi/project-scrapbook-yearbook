@@ -47,22 +47,21 @@ interface Chapter {
 const CHAPTERS: Chapter[] = [
   {
     id: "1",
-    // Row 1 (top): filmstrip · img5 · img6 (large) · img7
-    // Mid-left: img28 (large, under filmstrip+img5)
-    // Right column (below img7): img29 · img30 stacked
-    // Row 2 (bottom ~62%): img18 · img19 · img20
+    // Labels run sequentially across the whole gallery (chapter 1: 1–13 + vid1).
+    // filmstrip img1–4 · img5 (large) · img6 · img7 · img8 · vid1 · img9 · img10
+    // bottom row: img11 · img12 · img13
     pieces: [
       { label: "img1",  kind: "filmstrip", x: 0,  y: 0,  w: 22, rot: 0,  frames: ["img1","img2","img3","img4"] },
-      { label: "img5",  kind: "polaroid",  x: 24, y: 30, w: 21, rot: -4, tape: "plain" },
-      { label: "img6",  kind: "photo",     x: 32, y: 0,  w: 42, rot: 2 },
-      { label: "img7",  kind: "polaroid",  x: 75, y: 3,  w: 22, rot: -2, tape: "plain" },
-      { label: "img28", kind: "photo",     x: 0,  y: 44, w: 34, rot: -1 },
-      { label: "vid1",  kind: "tiktok",    x: 37, y: 35, w: 25, rot: 2 },
-      { label: "img29", kind: "polaroid",  x: 76, y: 26, w: 21, rot: 2 },
-      { label: "img30", kind: "polaroid",  x: 76, y: 48, w: 21, rot: -2 },
-      { label: "img18", kind: "polaroid",  x: 1,  y: 86, w: 27, rot: 3 },
-      { label: "img19", kind: "polaroid",  x: 31, y: 85, w: 28, rot: -2, tape: "plain" },
-      { label: "img20", kind: "polaroid",  x: 59, y: 84, w: 25, rot: 4 },
+      { label: "img5",  kind: "photo",     x: 32, y: 0,  w: 42, rot: 2 },
+      { label: "img6",  kind: "polaroid",  x: 72, y: 3,  w: 26, rot: -2, tape: "plain" },
+      { label: "img7",  kind: "polaroid",  x: 24, y: 30, w: 21, rot: -4, tape: "plain" },
+      { label: "img8",  kind: "photo",     x: 0,  y: 44, w: 34, rot: -1 },
+      { label: "vid1",  kind: "tiktok",    x: 43, y: 35, w: 25, rot: 2 },
+      { label: "img9",  kind: "polaroid",  x: 72, y: 26, w: 26, rot: 2 },
+      { label: "img10", kind: "polaroid",  x: 72, y: 48, w: 26, rot: -2 },
+      { label: "img11", kind: "polaroid",  x: 2,  y: 76, w: 26, rot: 3 },
+      { label: "img12", kind: "polaroid",  x: 37, y: 77, w: 27, rot: -2, tape: "plain" },
+      { label: "img13", kind: "polaroid",  x: 71, y: 76, w: 25, rot: 4 },
     ],
     doodles: [
       { label: "scrap1", x: 91, y: 25, w: 7, rot: 6 },
@@ -72,16 +71,16 @@ const CHAPTERS: Chapter[] = [
   },
   {
     id: "2",
-    // Row 1 (top): img8 · img9 · img10 · img11
-    // Row 2 (bottom ~46%): img21 · img22 · img23
+    // chapter 2: img14–20.  Row 1: img14 · img15 · img16 · img17 (note)
+    // Row 2 (bottom ~46%): img18 · img19 · img20
     pieces: [
-      { label: "img8",  kind: "polaroid", x: 1,  y: 3,  w: 23, rot: -3, tape: "plain" },
-      { label: "img9",  kind: "photo",    x: 26, y: 5,  w: 26, rot: 2,  clip: true },
-      { label: "img10", kind: "polaroid", x: 54, y: 2,  w: 24, rot: -1 },
-      { label: "img11", kind: "note",     x: 79, y: 5,  w: 19, rot: 3 },
-      { label: "img21", kind: "polaroid", x: 1,  y: 46, w: 27, rot: 2 },
-      { label: "img22", kind: "photo",    x: 31, y: 44, w: 32, rot: -2 },
-      { label: "img23", kind: "polaroid", x: 68, y: 46, w: 28, rot: 3 },
+      { label: "img14", kind: "polaroid", x: 2,  y: 11, w: 23, rot: -3, tape: "plain" },
+      { label: "img15", kind: "photo",    x: 29, y: 13, w: 25, rot: 2,  clip: true },
+      { label: "img16", kind: "polaroid", x: 55, y: 11, w: 23, rot: -1 },
+      { label: "img17", kind: "note",     x: 79, y: 13, w: 18, rot: 3 },
+      { label: "img18", kind: "polaroid", x: 1,  y: 46, w: 27, rot: 2 },
+      { label: "img19", kind: "photo",    x: 31, y: 44, w: 32, rot: -2 },
+      { label: "img20", kind: "polaroid", x: 68, y: 46, w: 28, rot: 3 },
     ],
     doodles: [
       { label: "scrap4", x: 4,  y: 84, w: 9, rot: 4 },
@@ -91,16 +90,16 @@ const CHAPTERS: Chapter[] = [
   },
   {
     id: "3",
-    // Row 1 (top): img12 · img13 · img24 · filmstrip
-    // Row 2 (bottom ~46%): img25 · img26 · img27
+    // chapter 3: img21–30.  Row 1: img21 · img22 · img23 · filmstrip img24–27
+    // Row 2 (bottom ~46%): img28 · img29 · img30
     pieces: [
-      { label: "img12", kind: "polaroid",  x: 1,  y: 3,  w: 23, rot: -4, tape: "heart" },
-      { label: "img13", kind: "polaroid",  x: 27, y: 0,  w: 31, rot: 4,  tape: "plain" },
-      { label: "img24", kind: "polaroid",  x: 60, y: 3,  w: 23, rot: -2 },
-      { label: "img14", kind: "filmstrip", x: 83, y: 0,  w: 16, rot: 0,  frames: ["img14","img15","img16","img17"] },
-      { label: "img25", kind: "photo",     x: 1,  y: 46, w: 30, rot: 2 },
-      { label: "img26", kind: "polaroid",  x: 34, y: 48, w: 27, rot: -3, tape: "plain" },
-      { label: "img27", kind: "polaroid",  x: 66, y: 46, w: 29, rot: 2 },
+      { label: "img21", kind: "polaroid",  x: 1,  y: 3,  w: 23, rot: -4, tape: "heart" },
+      { label: "img22", kind: "polaroid",  x: 27, y: 0,  w: 31, rot: 4,  tape: "plain" },
+      { label: "img23", kind: "polaroid",  x: 60, y: 3,  w: 23, rot: -2 },
+      { label: "img24", kind: "filmstrip", x: 83, y: 0,  w: 16, rot: 0,  frames: ["img24","img25","img26","img27"] },
+      { label: "img28", kind: "photo",     x: 1,  y: 46, w: 30, rot: 2 },
+      { label: "img29", kind: "polaroid",  x: 34, y: 48, w: 27, rot: -3, tape: "plain" },
+      { label: "img30", kind: "polaroid",  x: 66, y: 46, w: 29, rot: 2 },
     ],
     doodles: [
       { label: "scrap7", x: 22, y: 84, w: 9, rot: -4 },
@@ -110,6 +109,11 @@ const CHAPTERS: Chapter[] = [
 ];
 
 const GALLERY_EXTS = ["jpg", "jpeg", "png", "webp", "avif"];
+
+/* TEMPORARY: shows the filename badge on every frame so you know which photo
+ * goes where (drop e.g. img5.jpg into public/gallery/). Set to false — or
+ * delete the SHOW_LABELS references — once all images are placed. */
+const SHOW_LABELS = true;
 
 /**
  * Tries /gallery/<label>.<ext> in order; shows PlaceholderArt until an
@@ -122,11 +126,17 @@ function GalleryPhoto({ label }: { label: string }) {
   const [loaded, setLoaded] = useState(false);
 
   if (attempt >= GALLERY_EXTS.length) {
-    return <PlaceholderArt />;
+    return (
+      <>
+        <PlaceholderArt />
+        {SHOW_LABELS && <span className="piece-label">{label}</span>}
+      </>
+    );
   }
 
   return (
     <>
+      {SHOW_LABELS && <span className="piece-label">{label}</span>}
       {!loaded && <div className="piece-art-wrap"><PlaceholderArt /></div>}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
@@ -413,6 +423,7 @@ export default function GalleryScroll() {
                       ) : piece.kind === "tiktok" ? (
                         <div className="piece-tiktok-screen">
                           <TikTokFrame label={piece.label} />
+                          {SHOW_LABELS && <span className="piece-label piece-label--tiktok">{piece.label}</span>}
                         </div>
                       ) : (
                         <div className="piece-photo-area">
