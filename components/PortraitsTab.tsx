@@ -79,7 +79,7 @@ export default function PortraitsTab({ initial }: { initial: Student[] }) {
             <p className="portrait-lastname">{student.lastName.toUpperCase()}</p>
             <p className="portrait-firstname">{student.firstName} {student.middleName}</p>
             <p className="portrait-nick">&ldquo;{student.nickname}&rdquo;</p>
-            <p className="portrait-motto">{student.motto}</p>
+            <p className="portrait-motto">{student.role}</p>
           </article>
         ))}
         {students.length === 0 && (

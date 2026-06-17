@@ -180,7 +180,7 @@ function ShellContent({
           {/* ── portraits ─────────────────────────────── */}
           <section className="section" id="portraits">
             <div className="section-label section-label--center reveal">
-              <RansomImageText text="portraits" seed={17} className="ransom-img--label" intro={false} />
+              <RansomImageText text="portraits" seed={17} className="ransom-img--label" />
             </div>
             <p className="section-sub section-sub--center pixel-font reveal">
               all twenty-six of us, in alphabetical order of chaos
@@ -190,10 +190,10 @@ function ShellContent({
 
           {/* ── gallery ───────────────────────────────── */}
           <section className="section" id="gallery">
-            <div className="section-label reveal" data-anim="slideLeft">
-              <RansomText text="gallery" seed={8} className="ransom-small" />
+            <div className="section-label section-label--center reveal">
+              <RansomImageText text="gallery" seed={8} className="ransom-img--label" />
             </div>
-            <p className="section-sub pixel-font reveal">
+            <p className="section-sub section-sub--center pixel-font reveal">
               three chapters of memories — just keep scrolling
             </p>
             <GalleryScroll />
@@ -201,10 +201,10 @@ function ShellContent({
 
           {/* ── dedications ───────────────────────────── */}
           <section className="section" id="dedications">
-            <div className="section-label reveal" data-anim="slideLeft">
-              <RansomText text="dedications" seed={23} className="ransom-small" />
+            <div className="section-label section-label--center reveal">
+              <RansomImageText text="dedications" seed={23} className="ransom-img--label" />
             </div>
-            <p className="section-sub pixel-font reveal">
+            <p className="section-sub section-sub--center pixel-font reveal">
               the wall — sign in with your yearbook name to write
             </p>
             <DedicationsTab />

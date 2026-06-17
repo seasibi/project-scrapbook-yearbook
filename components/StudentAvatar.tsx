@@ -16,11 +16,11 @@ function Placeholder({ student, size }: { student: Student; size: number }) {
       aria-label={`Portrait of ${student.fullName}`}
       style={{ display: "block", width: "100%", height: "100%" }}
     >
-      <rect width="100" height="100" fill={student.color} opacity="0.18" />
-      <circle cx="50" cy="38" r="17" fill={student.color} opacity="0.55" />
+      <rect width="100" height="100" fill="var(--accent)" opacity="0.18" />
+      <circle cx="50" cy="38" r="17" fill="var(--accent)" opacity="0.55" />
       <path
         d="M18 92c4-20 16-30 32-30s28 10 32 30z"
-        fill={student.color}
+        fill="var(--accent)"
         opacity="0.55"
       />
       <text

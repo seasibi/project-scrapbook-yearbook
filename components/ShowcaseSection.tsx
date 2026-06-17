@@ -29,7 +29,7 @@ const PLACEHOLDER_PHOTO =
  * else in the shell.
  */
 export default function ShowcaseSection({ students }: { students: Student[] }) {
-  const quote = students[25] ?? students[0]; // Sofia — "We were never just classmates."
+  const featured = students[25] ?? students[0];
   const stackPicks = students.slice(0, 4);
 
   return (
@@ -45,7 +45,7 @@ export default function ShowcaseSection({ students }: { students: Student[] }) {
       {/* pattern 1 — letter-by-letter quote reveal */}
       <div className="mx-auto mt-[18vh] mb-[14vh] max-w-3xl text-center">
         <QuoteReveal
-          text={`“${quote.quote}” — ${quote.nickname}, batch 2026`}
+          text={`”${featured.nickname}” — ${featured.fullName}, batch 2026`}
           className="text-[clamp(1.4rem,3.2vw,2.2rem)]"
         />
       </div>
@@ -120,7 +120,7 @@ export default function ShowcaseSection({ students }: { students: Student[] }) {
                 “{student.nickname}”
               </p>
               <p className="mt-2 text-sm" style={{ color: "var(--ink-soft)" }}>
-                {student.quote}
+                {student.role}
               </p>
             </article>
           ))}

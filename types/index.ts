@@ -5,11 +5,8 @@ export interface Student {
   lastName: string;
   middleName: string;
   nickname: string;
-  quote: string;
-  motto: string;
-  birthday: string;
+  role: string;
   instagram: string;
-  color: string;
 }
 
 export interface GalleryItem {

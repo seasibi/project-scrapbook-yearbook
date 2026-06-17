@@ -99,7 +99,7 @@ export default function YearbookFlipbook({
                           <span className="spread-name pixel-font">{student.lastName.toUpperCase()}</span>
                           <span className="spread-name-first">{student.firstName} {student.middleName}</span>
                           <span className="spread-nick">&ldquo;{student.nickname}&rdquo;</span>
-                          <span className="spread-quote">{student.motto}</span>
+                          <span className="spread-quote">{student.role}</span>
                         </figcaption>
                       </figure>
                     ))}

@@ -615,15 +615,21 @@ body.js-ready .reveal.visible {
 }
 .stop-letter {
   animation: stopMotionIn 0.85s step-end both;
+  /* wait until the image inside has loaded before playing */
+  animation-play-state: paused;
 }
 .stop-letter--alt {
   animation-name: stopMotionInAlt;
 }
+/* image loaded — allow the animation to run */
+.stop-letter.loaded {
+  animation-play-state: running;
+}
 
 /* inside a scroll-revealed container the intro waits until the wrapper
-   gets .visible — the letters land when the section scrolls into view */
+   gets .visible — always beats the .loaded class */
 body.js-ready .reveal:not(.visible) .stop-letter {
-  animation-play-state: paused;
+  animation-play-state: paused !important;
 }
 
 /* section-label size (between the hero letters and the CSS scraps) */
@@ -1090,6 +1096,14 @@ body.js-ready .reveal:not(.visible) .stop-letter {
   display: block;
   width: 100%;
   height: 100%;
+}
+
+.piece-real-photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 .piece-label {

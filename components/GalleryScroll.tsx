@@ -100,6 +100,44 @@ const CHAPTERS: Chapter[] = [
   },
 ];
 
+const GALLERY_EXTS = ["jpg", "jpeg", "png", "webp", "avif"];
+
+/**
+ * Tries /gallery/<label>.<ext> in order; shows PlaceholderArt until an
+ * image loads. Drop photos into public/gallery/ named to match the label
+ * (e.g. img1.jpg, img2.png). If no file is found the placeholder stays.
+ */
+function GalleryPhoto({ label }: { label: string }) {
+  const [src, setSrc] = useState(`/gallery/${label}.${GALLERY_EXTS[0]}`);
+  const [attempt, setAttempt] = useState(0);
+  const [loaded, setLoaded] = useState(false);
+
+  if (attempt >= GALLERY_EXTS.length) {
+    return <PlaceholderArt />;
+  }
+
+  return (
+    <>
+      {!loaded && <PlaceholderArt />}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt={label}
+        className="piece-real-photo"
+        style={{ display: loaded ? "block" : "none" }}
+        onLoad={() => setLoaded(true)}
+        onError={() => {
+          const next = attempt + 1;
+          if (next < GALLERY_EXTS.length) {
+            setSrc(`/gallery/${label}.${GALLERY_EXTS[next]}`);
+          }
+          setAttempt(next);
+        }}
+      />
+    </>
+  );
+}
+
 /* the sky-cloud-hills placeholder art from the Canva mockup */
 function PlaceholderArt() {
   return (
@@ -280,15 +318,13 @@ export default function GalleryScroll() {
                         <div className="filmstrip-frames">
                           {(piece.frames ?? [piece.label]).map((frame) => (
                             <div className="filmstrip-frame" key={frame}>
-                              <PlaceholderArt />
-                              <span className="piece-label pixel-font">{frame}</span>
+                              <GalleryPhoto label={frame} />
                             </div>
                           ))}
                         </div>
                       ) : (
                         <div className="piece-photo-area">
-                          <PlaceholderArt />
-                          <span className="piece-label pixel-font">{piece.label}</span>
+                          <GalleryPhoto label={piece.label} />
                         </div>
                       )}
                     </div>
