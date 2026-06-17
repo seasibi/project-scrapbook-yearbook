@@ -52,8 +52,8 @@ const CHAPTERS: Chapter[] = [
     // Right column (below img7): img29 · img30 stacked
     // Row 2 (bottom ~62%): img18 · img19 · img20
     pieces: [
-      { label: "img1",  kind: "filmstrip", x: 0,  y: 0,  w: 16, rot: 0,  frames: ["img1","img2","img3","img4"] },
-      { label: "img5",  kind: "polaroid",  x: 18, y: 5,  w: 21, rot: -4, tape: "plain" },
+      { label: "img1",  kind: "filmstrip", x: 0,  y: 0,  w: 22, rot: 0,  frames: ["img1","img2","img3","img4"] },
+      { label: "img5",  kind: "polaroid",  x: 24, y: 30, w: 21, rot: -4, tape: "plain" },
       { label: "img6",  kind: "photo",     x: 32, y: 0,  w: 42, rot: 2 },
       { label: "img7",  kind: "polaroid",  x: 75, y: 3,  w: 22, rot: -2, tape: "plain" },
       { label: "img28", kind: "photo",     x: 0,  y: 44, w: 34, rot: -1 },
@@ -127,7 +127,7 @@ function GalleryPhoto({ label }: { label: string }) {
 
   return (
     <>
-      {!loaded && <PlaceholderArt />}
+      {!loaded && <div className="piece-art-wrap"><PlaceholderArt /></div>}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={src}
@@ -151,7 +151,7 @@ function GalleryPhoto({ label }: { label: string }) {
 function GalleryVideo({ label }: { label: string }) {
   return (
     <video
-      className="piece-real-photo"
+      className="tt-video"
       autoPlay
       muted
       loop
@@ -161,6 +161,114 @@ function GalleryVideo({ label }: { label: string }) {
       <source src={`/gallery/${label}.mp4`} type="video/mp4" />
       <source src={`/gallery/${label}.webm`} type="video/webm" />
     </video>
+  );
+}
+
+/* ── TikTok frame: a fake-but-real TikTok UI over the video ────────────────────
+ * Edit anything in TIKTOK below — username, caption, sound, counts. */
+const TIKTOK = {
+  username: "batch2026",
+  caption: "last day energy 🥹 #music #dance #foryou #foryoupage",
+  sound: "original sound — batch 2026",
+  likes: "633.0K",
+  comments: "10K",
+  saves: "60.5K",
+  shares: "11.9K",
+};
+
+function TikTokFrame({ label }: { label: string }) {
+  const t = TIKTOK;
+  return (
+    <div className="tt-stage">
+      <GalleryVideo label={label} />
+      <span className="tt-shade" aria-hidden="true" />
+
+      {/* top tabs */}
+      <div className="tt-top">
+        <span className="tt-tabs">
+          <span className="tt-tab">Following</span>
+          <span className="tt-tab tt-tab--active">For You</span>
+        </span>
+        <svg className="tt-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
+          <circle cx="11" cy="11" r="7" />
+          <path d="M21 21l-4.3-4.3" />
+        </svg>
+      </div>
+
+      {/* right action rail */}
+      <div className="tt-rail">
+        <span className="tt-avatar">
+          <span className="tt-avatar-img" />
+          <span className="tt-follow" aria-hidden="true">+</span>
+        </span>
+        <span className="tt-action">
+          <svg className="tt-ic tt-ic--like" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 21s-7-4.35-9.5-8.5C.5 8.7 2 5 5.5 5 7.6 5 9 6.4 12 9c3-2.6 4.4-4 6.5-4C22 5 23.5 8.7 21.5 12.5 19 16.65 12 21 12 21z" />
+          </svg>
+          <span className="tt-count">{t.likes}</span>
+        </span>
+        <span className="tt-action">
+          <svg className="tt-ic" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 3C6.5 3 2 6.6 2 11c0 2.3 1.2 4.4 3.2 5.9-.2 1.3-.8 2.6-1.7 3.8 1.8-.3 3.4-1 4.8-2.1 1.1.3 2.4.4 3.7.4 5.5 0 10-3.6 10-8s-4.5-8-10-8z" />
+          </svg>
+          <span className="tt-count">{t.comments}</span>
+        </span>
+        <span className="tt-action">
+          <svg className="tt-ic" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z" />
+          </svg>
+          <span className="tt-count">{t.saves}</span>
+        </span>
+        <span className="tt-action">
+          <svg className="tt-ic" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M21 12 11 4v4C5 9 3 14 3 20c2.5-4 5-5 8-5v4l10-7z" />
+          </svg>
+          <span className="tt-count">{t.shares}</span>
+        </span>
+        <span className="tt-disc" aria-hidden="true">
+          <svg className="tt-disc-note" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M9 17V5l9-2v11" stroke="currentColor" strokeWidth="2" fill="none" />
+            <circle cx="7" cy="17" r="2.4" />
+            <circle cx="16" cy="14" r="2.4" />
+          </svg>
+        </span>
+      </div>
+
+      {/* bottom caption */}
+      <div className="tt-info">
+        <span className="tt-user">@{t.username}</span>
+        <span className="tt-caption">{t.caption}</span>
+        <span className="tt-sound">
+          <svg className="tt-note" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M9 17V5l9-2v11" stroke="currentColor" strokeWidth="2" fill="none" />
+            <circle cx="7" cy="17" r="2.2" />
+            <circle cx="16" cy="14" r="2.2" />
+          </svg>
+          <span className="tt-sound-text">{t.sound}</span>
+        </span>
+      </div>
+
+      {/* bottom nav */}
+      <div className="tt-nav" aria-hidden="true">
+        <svg className="tt-nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round">
+          <path d="M3 11l9-8 9 8" />
+          <path d="M5 10v10h14V10" />
+        </svg>
+        <svg className="tt-nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="9" cy="8" r="3" />
+          <path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6" />
+          <path d="M16 5.5a3 3 0 0 1 0 6M18.5 14c1.6.7 2.5 2.2 2.5 4" />
+        </svg>
+        <span className="tt-create">+</span>
+        <svg className="tt-nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round">
+          <path d="M4 5h16v12H8l-4 4z" />
+        </svg>
+        <svg className="tt-nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="8" r="4" />
+          <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
+        </svg>
+      </div>
+    </div>
   );
 }
 
@@ -304,7 +412,7 @@ export default function GalleryScroll() {
                         </div>
                       ) : piece.kind === "tiktok" ? (
                         <div className="piece-tiktok-screen">
-                          <GalleryVideo label={piece.label} />
+                          <TikTokFrame label={piece.label} />
                         </div>
                       ) : (
                         <div className="piece-photo-area">
