@@ -113,7 +113,7 @@ const GALLERY_EXTS = ["jpg", "jpeg", "png", "webp", "avif"];
 /* TEMPORARY: shows the filename badge on every frame so you know which photo
  * goes where (drop e.g. img5.jpg into public/gallery/). Set to false — or
  * delete the SHOW_LABELS references — once all images are placed. */
-const SHOW_LABELS = true;
+const SHOW_LABELS = false;
 
 /**
  * Tries /gallery/<label>.<ext> in order; shows PlaceholderArt until an
@@ -286,15 +286,11 @@ function TikTokFrame({ label }: { label: string }) {
 function PlaceholderArt() {
   return (
     <svg viewBox="0 0 100 75" preserveAspectRatio="none" aria-hidden="true" className="piece-art">
-      <rect width="100" height="75" fill="#d7ebf7" />
-      <rect width="100" height="40" fill="#cfe4f4" />
-      <g fill="#ffffff">
-        <ellipse cx="62" cy="17" rx="13" ry="6.5" />
-        <ellipse cx="53" cy="20" rx="9" ry="5" />
-        <ellipse cx="71" cy="20" rx="9" ry="5" />
-      </g>
-      <path d="M0 52C20 42 40 46 56 52s30 8 44-2v25H0z" fill="#a8cc62" />
-      <path d="M0 61c28-8 58-4 100 2v12H0z" fill="#8fb84a" />
+      <rect width="100" height="75" fill="var(--paper, #fdfaf2)" />
+      <rect x="20" y="15" width="60" height="42" rx="2" fill="none" stroke="var(--card-border, #cfc4a8)" strokeWidth="1.5" strokeDasharray="4 3" />
+      <circle cx="50" cy="30" r="8" fill="none" stroke="var(--accent, #9a7a58)" strokeWidth="1.2" opacity="0.5" />
+      <path d="M46 30l4 4 4-4" fill="none" stroke="var(--accent, #9a7a58)" strokeWidth="1.2" strokeLinecap="round" opacity="0.5" />
+      <text x="50" y="48" textAnchor="middle" fill="var(--ink-soft, #6e5a42)" fontSize="5" fontFamily="monospace" opacity="0.6">drop a photo here</text>
     </svg>
   );
 }

@@ -5,6 +5,7 @@ export interface Student {
   lastName: string;
   middleName: string;
   nickname: string;
+  motto: string;
   role: string;
   instagram: string;
 }

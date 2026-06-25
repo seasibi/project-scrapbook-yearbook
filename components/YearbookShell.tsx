@@ -9,8 +9,6 @@ import RansomImageText from "@/components/RansomImageText";
 import PortraitsTab from "@/components/PortraitsTab";
 import GalleryScroll from "@/components/GalleryScroll";
 import DedicationsTab from "@/components/DedicationsTab";
-import DownloadPdf from "@/components/DownloadPdf";
-import ShowcaseSection from "@/components/ShowcaseSection";
 import StickerLayer from "@/components/StickerLayer";
 import { MemoryWords } from "@/components/animations";
 import { useScrollReveal } from "@/lib/useScrollReveal";
@@ -28,7 +26,6 @@ const NAV = [
   { id: "portraits", label: "portraits" },
   { id: "gallery", label: "gallery" },
   { id: "dedications", label: "dedications" },
-  { id: "download", label: "download" },
 ];
 
 type Theme = "day" | "night";
@@ -66,6 +63,7 @@ function ShellContent({
     return localStorage.getItem("memoirs-theme") === "night" ? "night" : "day";
   });
   const [activeSection, setActiveSection] = useState("yearbook");
+  const [menuOpen, setMenuOpen] = useState(false);
   const mainRef = useRef<HTMLDivElement>(null);
 
   useScrollReveal();
@@ -106,17 +104,30 @@ function ShellContent({
               </span>
               <span className="topbar-brand-name pixel-font">Batch 26</span>
             </span>
-            <nav className="topbar-nav" aria-label="Sections">
+            <nav className={`topbar-nav ${menuOpen ? "open" : ""}`} aria-label="Sections">
               {NAV.map((item) => (
                 <a
                   key={item.id}
                   href={`#${item.id}`}
                   className={`topbar-link ${activeSection === item.id ? "active" : ""}`}
+                  onClick={() => setMenuOpen(false)}
                 >
                   {item.label}
                 </a>
               ))}
             </nav>
+            <div className="topbar-actions">
+              <button
+                type="button"
+                className="hamburger"
+                onClick={() => setMenuOpen(!menuOpen)}
+                aria-label={menuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={menuOpen}
+              >
+                <span className={`hamburger-bar ${menuOpen ? "open" : ""}`} />
+                <span className={`hamburger-bar ${menuOpen ? "open" : ""}`} />
+                <span className={`hamburger-bar ${menuOpen ? "open" : ""}`} />
+              </button>
             <button
               type="button"
               className="theme-toggle"
@@ -135,6 +146,7 @@ function ShellContent({
                 </svg>
               )}
             </button>
+            </div>
           </header>
 
           {/* ── hero ──────────────────────────────────── */}
@@ -158,7 +170,6 @@ function ShellContent({
                 <MemoryWords words={MEMORY_WORDS} />
               </span>
             </h2>
-            <span className="scroll-hint stagger-7" aria-hidden="true">⌄</span>
           </section>
 
           {/* ── yearbook flipbook ─────────────────────── */}
@@ -177,6 +188,8 @@ function ShellContent({
             <YearbookFlipbook students={students} pages={yearbookPages} />
           </section>
 
+          <div className="section-divider" aria-hidden="true"><span className="section-divider-mark">✦</span></div>
+
           {/* ── portraits ─────────────────────────────── */}
           <section className="section" id="portraits">
             <div className="section-label section-label--center reveal">
@@ -187,6 +200,8 @@ function ShellContent({
             </p>
             <PortraitsTab initial={students} />
           </section>
+
+          <div className="section-divider" aria-hidden="true"><span className="section-divider-mark">✦</span></div>
 
           {/* ── gallery ───────────────────────────────── */}
           <section className="section" id="gallery">
@@ -199,6 +214,8 @@ function ShellContent({
             <GalleryScroll />
           </section>
 
+          <div className="section-divider" aria-hidden="true"><span className="section-divider-mark">✦</span></div>
+
           {/* ── dedications ───────────────────────────── */}
           <section className="section" id="dedications">
             <div className="section-label section-label--center reveal">
@@ -207,22 +224,13 @@ function ShellContent({
             <p className="section-sub section-sub--center pixel-font reveal">
               the wall — sign in with your yearbook name to write
             </p>
-            <DedicationsTab />
+            <DedicationsTab students={students} />
           </section>
-
-          {/* ── pdf download ──────────────────────────── */}
-          <section className="section section--paper" id="download">
-            <span className="torn-edge top" aria-hidden="true" />
-            <DownloadPdf />
-            <span className="torn-edge bottom" aria-hidden="true" />
-          </section>
-
-          {/* ── animation showcase (demo patterns) ────── */}
-          <ShowcaseSection students={students} />
 
           {/* ── footer ────────────────────────────────── */}
           <footer className="footer">
             <span className="pixel-font">made with &lt;3 · class of 2026</span>
+            <span className="footer-rule" aria-hidden="true" />
             <span className="footer-fin">Batch 26 · fin.</span>
           </footer>
 

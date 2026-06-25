@@ -8,5 +8,21 @@
       "PowerShell(Invoke-WebRequest -Uri \"https://export-download.canva.com/ZloKo/DAHMKTZloKo/-1/0-3468277686574285494.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAQYCGKMUH5AO7UJ26%2F20260610%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260610T053355Z&X-Amz-Expires=36930&X-Amz-Signature=c9804b8a6c8403eb1a97577731c02ff5cee312ff9277c6579a22719a13c3bb35&X-Amz-SignedHeaders=host%3Bx-amz-expected-bucket-owner&response-expires=Wed%2C%2010%20Jun%202026%2015%3A49%3A25%20GMT\" -OutFile \"$env:TEMP\\\\canva-home.png\"; \\(Get-Item \"$env:TEMP\\\\canva-home.png\"\\).Length)",
       "mcp__Claude_Preview__preview_start"
     ]
-  }
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/skills/impeccable/scripts/hook.mjs\"",
+            "timeout": 5,
+            "statusMessage": "Checking UI changes"
+          }
+        ]
+      }
+    ]
+  },
+  "description": "Impeccable design detector: runs after Edit/Write/MultiEdit on UI files and surfaces findings as system reminders."
 }

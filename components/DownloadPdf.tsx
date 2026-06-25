@@ -56,7 +56,7 @@ export default function DownloadPdf() {
       </div>
 
       <p className="download-note pixel-font reveal">
-        ✦ exports go in /public/yearbook-pdf/ — full.pdf + one per section ✦
+        ✦ the full canva yearbook, one click away ✦
       </p>
     </div>
   );

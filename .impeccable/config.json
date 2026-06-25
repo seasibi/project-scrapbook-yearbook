@@ -1,0 +1,20 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "bounce-easing",
+        "value": "bowbounce",
+        "reason": "Intentional physical ribbon bounce animation for scrapbook brand",
+        "createdAt": "2026-06-25T11:27:41.251Z"
+      },
+      {
+        "rule": "bounce-easing",
+        "value": "cubic-bezier(0.34, 1.56, 0.64, 1)",
+        "reason": "Intentional overshoot easing for scrapbook object settling (tape press, sticker land, divider reveal)",
+        "createdAt": "2026-06-25T11:27:42.715Z"
+      }
+    ]
+  }
+}

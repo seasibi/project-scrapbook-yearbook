@@ -3,11 +3,6 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
-/**
- * Cycles through memory words one at a time — the current word exits
- * upward while the next slides in from below (crossfade only under
- * prefers-reduced-motion).
- */
 export default function MemoryWords({
   words,
   speed = 15,
@@ -39,15 +34,15 @@ export default function MemoryWords({
   }, [words.length, duration, stagger, delay]);
 
   return (
-    <span className="inline-grid overflow-hidden align-bottom [grid-template-areas:'word']">
-      <AnimatePresence mode="wait">
+    <span className="memory-words-wrap">
+      <AnimatePresence initial={false}>
         <motion.span
           key={index}
-          className="[grid-area:word] whitespace-nowrap"
-          initial={reducedMotion ? { opacity: 0 } : { y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={reducedMotion ? { opacity: 0 } : { y: -20, opacity: 0 }}
-          transition={{ duration: Math.min(duration, 1.2), ease: "easeInOut" }}
+          className="memory-word"
+          initial={reducedMotion ? { opacity: 0 } : { y: "100%", opacity: 0 }}
+          animate={{ y: "0%", opacity: 1 }}
+          exit={reducedMotion ? { opacity: 0 } : { y: "-100%", opacity: 0 }}
+          transition={{ duration: 0.4, ease: "easeInOut" }}
         >
           {words[index]}
         </motion.span>

@@ -1,14 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { useAuth } from "@/components/AuthContext";
-import type { Dedication } from "@/types";
+import type { Dedication, Student } from "@/types";
 
 const MAX_LENGTH = 500;
 
 type PanelMode = "login" | "register";
 
-export default function DedicationsTab() {
+export default function DedicationsTab({ students }: { students: Student[] }) {
   const { user, loading, refresh, signOut } = useAuth();
   const [dedications, setDedications] = useState<Dedication[]>([]);
   const [mode, setMode] = useState<PanelMode>("login");
@@ -20,6 +20,25 @@ export default function DedicationsTab() {
   const [confirm, setConfirm] = useState("");
   const [authError, setAuthError] = useState("");
   const [busy, setBusy] = useState(false);
+
+  // name autocomplete state
+  const [nameFocused, setNameFocused] = useState(false);
+  const nameRef = useRef<HTMLDivElement>(null);
+  const nameSuggestions = useMemo(() => {
+    const q = fullName.trim().toLowerCase();
+    if (q.length < 2) return [];
+    return students.filter((s) => s.fullName.toLowerCase().includes(q)).slice(0, 5);
+  }, [fullName, students]);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (nameRef.current && !nameRef.current.contains(e.target as Node)) {
+        setNameFocused(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // write form state
   const [toName, setToName] = useState("");
@@ -104,7 +123,7 @@ export default function DedicationsTab() {
       setToName("");
       setMessage("");
       setSent(true);
-      setTimeout(() => setSent(false), 2500);
+      setTimeout(() => setSent(false), 5000);
       await loadDedications();
     } catch {
       setWriteError("Network error — try again.");
@@ -133,9 +152,12 @@ export default function DedicationsTab() {
           </article>
         ))}
         {dedications.length === 0 && (
-          <p className="empty-note pixel-font">
-            the wall is empty — be the first to write something
-          </p>
+          <div className="empty-wall reveal">
+            <p className="empty-wall-icon" aria-hidden="true">&#x1F4DD;</p>
+            <p className="empty-wall-text pixel-font">
+              this wall is waiting for the first memory — will it be yours?
+            </p>
+          </div>
         )}
       </div>
 
@@ -185,7 +207,7 @@ export default function DedicationsTab() {
         ) : (
           <>
             <h3 className="panel-title">
-              {mode === "login" ? "Sign in" : "Claim your page"}
+              {mode === "login" ? "Sign in" : "Join the wall"}
             </h3>
             <form onSubmit={submitAuth} className="panel-form">
               {mode === "register" && (
@@ -194,15 +216,39 @@ export default function DedicationsTab() {
                     full name
                   </label>
                   <p className="field-note pixel-font">
-                    firstname middlename lastname — exactly as in the yearbook
+                    start typing — pick your name from the list
                   </p>
-                  <input
-                    id="reg-name"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    placeholder="e.g. Hannah Lei Holt Angeles"
-                    required
-                  />
+                  <div className="name-autocomplete" ref={nameRef}>
+                    <input
+                      id="reg-name"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      onFocus={() => setNameFocused(true)}
+                      placeholder="start typing your name…"
+                      autoComplete="off"
+                      required
+                    />
+                    {nameFocused && nameSuggestions.length > 0 && (
+                      <ul className="name-suggestions" role="listbox">
+                        {nameSuggestions.map((s) => (
+                          <li key={s.id} role="option">
+                            <button
+                              type="button"
+                              className="name-suggestion pixel-font"
+                              onMouseDown={(e) => e.preventDefault()}
+                              onClick={() => {
+                                setFullName(s.fullName);
+                                setNameFocused(false);
+                              }}
+                            >
+                              {s.fullName}
+                              {s.nickname ? <span className="name-suggestion-nick">&ldquo;{s.nickname}&rdquo;</span> : null}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
                 </>
               )}
               <label className="field-label pixel-font" htmlFor="auth-user">username</label>
@@ -255,7 +301,7 @@ export default function DedicationsTab() {
                 : "already registered? sign in"}
             </button>
             <p className="panel-note">
-              One account per graduate. Your full name must match the yearbook exactly — Firstname Middlename Lastname.
+              One account per graduate — pick your name from the list and choose a username + password.
             </p>
           </>
         )}

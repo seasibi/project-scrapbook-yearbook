@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Playfair_Display_SC, Libre_Baskerville, DM_Sans, Press_Start_2P } from "next/font/google";
+import { Playfair_Display, Playfair_Display_SC, DM_Sans, Press_Start_2P } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 
@@ -13,13 +13,6 @@ const playfairSC = Playfair_Display_SC({
   variable: "--font-serif-sc",
   subsets: ["latin"],
   weight: ["400", "700"],
-});
-
-const libreBaskerville = Libre_Baskerville({
-  variable: "--font-baskerville",
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  style: ["normal", "italic"],
 });
 
 const dmSans = DM_Sans({
@@ -57,7 +50,7 @@ export default function RootLayout({
   return (
     <html lang="en" data-theme="day" suppressHydrationWarning>
       <body
-        className={`${playfair.variable} ${playfairSC.variable} ${libreBaskerville.variable} ${dmSans.variable} ${providence.variable} ${pressStart.variable}`}
+        className={`${playfair.variable} ${playfairSC.variable} ${dmSans.variable} ${providence.variable} ${pressStart.variable}`}
       >
         {children}
       </body>

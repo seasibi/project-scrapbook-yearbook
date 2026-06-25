@@ -78,8 +78,25 @@ export default function PortraitsTab({ initial }: { initial: Student[] }) {
             </div>
             <p className="portrait-lastname">{student.lastName.toUpperCase()}</p>
             <p className="portrait-firstname">{student.firstName} {student.middleName}</p>
-            <p className="portrait-nick">&ldquo;{student.nickname}&rdquo;</p>
-            <p className="portrait-motto">{student.role}</p>
+            {student.motto && <p className="portrait-motto">&ldquo;{student.motto}&rdquo;</p>}
+            {student.role && <p className="portrait-role">{student.role}</p>}
+            {student.instagram && (
+              <p className="portrait-socials">
+                <a
+                  href={`https://instagram.com/${student.instagram.replace(/^@/, "")}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="portrait-social-link"
+                >
+                  <svg viewBox="0 0 24 24" className="portrait-social-icon" aria-hidden="true">
+                    <rect x="2" y="2" width="20" height="20" rx="5" fill="none" stroke="currentColor" strokeWidth="1.8" />
+                    <circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" strokeWidth="1.8" />
+                    <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" />
+                  </svg>
+                  <span>{student.instagram.startsWith("@") ? student.instagram : `@${student.instagram}`}</span>
+                </a>
+              </p>
+            )}
           </article>
         ))}
         {students.length === 0 && (

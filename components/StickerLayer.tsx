@@ -12,8 +12,8 @@ import {
 } from "@/types";
 
 const POLL_INTERVAL = 15_000;
-const MAX_UPLOAD_PX = 140;     // max canvas dimension before storing
-const MAX_UPLOAD_BYTES = 180_000; // ~135KB raw → ~180KB base64
+const MAX_UPLOAD_PX = 140;
+const MAX_UPLOAD_BYTES = 180_000;
 
 type TrayTab = StickerCategory | "text" | "upload";
 
@@ -27,6 +27,7 @@ interface ActiveDrag {
   yPct: number;
   rotation: number;
   scale: number;
+  section: string;
 }
 
 interface ActiveResize {
@@ -37,6 +38,66 @@ interface ActiveResize {
   yPct: number;
   rotation: number;
   scale: number;
+}
+
+const SECTIONS = ["home", "yearbook", "portraits", "gallery", "dedications", "download"];
+
+function detectSection(clientX: number, clientY: number): string {
+  for (const id of SECTIONS) {
+    const el = document.getElementById(id);
+    if (!el) continue;
+    const r = el.getBoundingClientRect();
+    if (clientY >= r.top && clientY <= r.bottom && clientX >= r.left && clientX <= r.right) {
+      return id;
+    }
+  }
+  return "page";
+}
+
+function toSectionPct(
+  clientX: number,
+  clientY: number,
+  sectionId: string,
+  layerEl: HTMLDivElement
+): { xPct: number; yPct: number } {
+  if (sectionId === "page") {
+    const lr = layerEl.getBoundingClientRect();
+    return {
+      xPct: ((clientX - lr.left) / lr.width) * 100,
+      yPct: ((clientY - lr.top) / lr.height) * 100,
+    };
+  }
+  const el = document.getElementById(sectionId);
+  if (!el) {
+    const lr = layerEl.getBoundingClientRect();
+    return {
+      xPct: ((clientX - lr.left) / lr.width) * 100,
+      yPct: ((clientY - lr.top) / lr.height) * 100,
+    };
+  }
+  const r = el.getBoundingClientRect();
+  return {
+    xPct: ((clientX - r.left) / r.width) * 100,
+    yPct: ((clientY - r.top) / r.height) * 100,
+  };
+}
+
+function stickerPosition(
+  sticker: PlacedSticker,
+  layerEl: HTMLDivElement
+): { left: string; top: string } | null {
+  if (sticker.section === "page" || !sticker.section) {
+    return { left: `${sticker.xPct}%`, top: `${sticker.yPct}%` };
+  }
+  const sectionEl = document.getElementById(sticker.section);
+  if (!sectionEl) {
+    return { left: `${sticker.xPct}%`, top: `${sticker.yPct}%` };
+  }
+  const lr = layerEl.getBoundingClientRect();
+  const sr = sectionEl.getBoundingClientRect();
+  const x = sr.left - lr.left + (sticker.xPct / 100) * sr.width;
+  const y = sr.top - lr.top + (sticker.yPct / 100) * sr.height;
+  return { left: `${x}px`, top: `${y}px` };
 }
 
 // ── compress image via canvas ─────────────────────────────────────────────
@@ -55,7 +116,6 @@ function compressImage(file: File): Promise<string> {
       const ctx = canvas.getContext("2d");
       if (!ctx) { reject(new Error("canvas unavailable")); return; }
       ctx.drawImage(img, 0, 0, w, h);
-      // try PNG first (preserves transparency); fall back to JPEG if too large
       let dataUrl = canvas.toDataURL("image/png");
       if (dataUrl.length > MAX_UPLOAD_BYTES) {
         dataUrl = canvas.toDataURL("image/jpeg", 0.8);
@@ -80,21 +140,44 @@ export default function StickerLayer() {
   const [justLanded, setJustLanded] = useState<number | null>(null);
   const layerRef = useRef<HTMLDivElement>(null);
 
-  // text sticker creation
   const [textDraft, setTextDraft] = useState("");
   const [textFont, setTextFont] = useState<"pixel" | "ransom">("pixel");
   const [placingText, setPlacingText] = useState(false);
 
-  // upload sticker creation
   const [uploadPreview, setUploadPreview] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState("");
   const [placingUpload, setPlacingUpload] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // move / resize refs (avoid stale closure issues)
   const activeDragRef = useRef<ActiveDrag | null>(null);
   const activeResizeRef = useRef<ActiveResize | null>(null);
   const [movingId, setMovingId] = useState<number | null>(null);
+
+  // close tray on Escape
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === "Escape" && trayOpen) setTrayOpen(false);
+    }
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
+  }, [trayOpen]);
+
+  // force re-render on scroll/resize so section-relative positions update
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    let raf = 0;
+    const bump = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => setTick((t) => t + 1));
+    };
+    window.addEventListener("scroll", bump, { passive: true });
+    window.addEventListener("resize", bump);
+    return () => {
+      window.removeEventListener("scroll", bump);
+      window.removeEventListener("resize", bump);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
 
   const load = useCallback(async () => {
     try {
@@ -125,9 +208,8 @@ export default function StickerLayer() {
     const stickerId = e.dataTransfer.getData("text/sticker-id");
     if (!stickerId || !layerRef.current || !user) return;
 
-    const rect = layerRef.current.getBoundingClientRect();
-    const xPct = ((e.clientX - rect.left) / rect.width) * 100;
-    const yPct = ((e.clientY - rect.top) / rect.height) * 100;
+    const section = detectSection(e.clientX, e.clientY);
+    const { xPct, yPct } = toSectionPct(e.clientX, e.clientY, section, layerRef.current);
     const rotation = Math.round((Math.random() * 28 - 14) * 10) / 10;
     const scale = Math.round((0.85 + Math.random() * 0.4) * 100) / 100;
 
@@ -135,7 +217,7 @@ export default function StickerLayer() {
       const res = await fetch("/api/stickers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ stickerId, xPct, yPct, rotation, scale, section: "page" }),
+        body: JSON.stringify({ stickerId, xPct, yPct, rotation, scale, section }),
       });
       const data = await res.json();
       if (res.ok && data.sticker) {
@@ -179,7 +261,7 @@ export default function StickerLayer() {
   async function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
     setUploadError("");
     const file = e.target.files?.[0];
-    e.target.value = ""; // reset so same file can be re-selected
+    e.target.value = "";
     if (!file) return;
     if (!file.type.startsWith("image/")) {
       setUploadError("Please pick an image file.");
@@ -243,6 +325,7 @@ export default function StickerLayer() {
       origXPct: sticker.xPct, origYPct: sticker.yPct,
       xPct: sticker.xPct, yPct: sticker.yPct,
       rotation: sticker.rotation, scale: sticker.scale,
+      section: sticker.section,
     };
     setMovingId(sticker.id);
   }
@@ -250,9 +333,13 @@ export default function StickerLayer() {
   function onStickerPointerMove(e: PointerEvent<HTMLDivElement>, sticker: PlacedSticker) {
     const drag = activeDragRef.current;
     if (!drag || drag.id !== sticker.id || !layerRef.current) return;
-    const rect = layerRef.current.getBoundingClientRect();
-    const newX = Math.max(1, Math.min(99, drag.origXPct + ((e.clientX - drag.startPx) / rect.width) * 100));
-    const newY = Math.max(1, Math.min(99, drag.origYPct + ((e.clientY - drag.startPy) / rect.height) * 100));
+
+    // compute delta in the section's coordinate space
+    const sectionEl = drag.section !== "page" ? document.getElementById(drag.section) : null;
+    const refRect = sectionEl ? sectionEl.getBoundingClientRect() : layerRef.current.getBoundingClientRect();
+
+    const newX = Math.max(1, Math.min(99, drag.origXPct + ((e.clientX - drag.startPx) / refRect.width) * 100));
+    const newY = Math.max(1, Math.min(99, drag.origYPct + ((e.clientY - drag.startPy) / refRect.height) * 100));
     drag.xPct = newX;
     drag.yPct = newY;
     setPlaced((prev) => prev.map((s) => (s.id === sticker.id ? { ...s, xPct: newX, yPct: newY } : s)));
@@ -272,7 +359,7 @@ export default function StickerLayer() {
     });
   }
 
-  // ── resize sticker (pointer capture on the resize handle) ───────────
+  // ── resize sticker ───────────
   function startResize(e: PointerEvent<HTMLSpanElement>, sticker: PlacedSticker) {
     e.preventDefault();
     e.stopPropagation();
@@ -324,6 +411,9 @@ export default function StickerLayer() {
           const mine = user?.username === sticker.placedBy;
           const isMovingThis = movingId === sticker.id;
 
+          const pos = layerRef.current ? stickerPosition(sticker, layerRef.current) : null;
+          if (!pos) return null;
+
           return (
             <div
               key={sticker.id}
@@ -331,8 +421,8 @@ export default function StickerLayer() {
                 isUpload ? "is-upload" : ""
               } ${justLanded === sticker.id ? "landing" : ""} ${isMovingThis ? "is-dragging" : ""}`}
               style={{
-                left: `${sticker.xPct}%`,
-                top: `${sticker.yPct}%`,
+                left: pos.left,
+                top: pos.top,
                 transform: `translate(-50%, -50%) rotate(${sticker.rotation}deg) scale(${sticker.scale})`,
               }}
               data-tip={mine ? "you · drag to move" : sticker.placedBy}
