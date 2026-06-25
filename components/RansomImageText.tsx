@@ -2,148 +2,73 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ScrapLetter } from "@/components/RansomText";
+import { LETTERS } from "@/lib/lettersManifest";
 
 const ROTS   = [-7, 5, -3, 6, -5, 2, 7, -4, 3, -6];
 const DYS    = [0.05, -0.06, 0.02, -0.09, 0.06, -0.02, 0.08, 0, -0.04, 0.03];
 const SCALES = [1, 1.07, 0.94, 1.04, 0.92, 1.09, 0.97, 1.02, 0.95, 1.05];
 
-const STAGGER = 0.12;
-const NUM_TIERS = 4;
-const MAX_VARIANTS = 7;
+const STAGGER = 0.12;        // seconds between letters in the left→right cascade
+const NUM_TIERS = 4;         // words pick a "batch" so each looks cut from one export
+const READY_TIMEOUT = 700;   // ms — play even if a glyph image is still loading
 
-let wordTierCursor = 0;
-
-const lastFirstSrc = new Map<string, string>();
-
-type UsedByChar = Map<string, Set<string>>;
-
-function tierSrc(char: string, tier: number): string {
-  return tier <= 1 ? `/letters/${char}.png` : `/letters/${char}-${tier}.png`;
+/**
+ * Deterministic glyph choice — same (char, occurrence, tier) always resolves to
+ * the same real file from the manifest, so the title looks identical on every
+ * reload and never 404s. `tier` keeps a word's letters visually coherent;
+ * `occurrence` makes a repeated letter in one word use a different cut-out.
+ * Returns null when no artwork exists → caller uses the CSS ScrapLetter.
+ */
+function pickSrc(char: string, occurrence: number, tier: number): string | null {
+  const variants = LETTERS[char];
+  if (!variants || variants.length === 0) return null;
+  const start = (tier - 1) % variants.length;
+  return variants[(start + occurrence) % variants.length];
 }
 
-function buildPool(char: string): string[] {
-  const pool = [`/letters/${char}.png`];
-  for (let n = 2; n <= MAX_VARIANTS; n++) pool.push(`/letters/${char}-${n}.png`);
-  if (char === "t") pool.push(`/letters/t-1.png`);
-  return pool;
-}
-
-function shuffle<T>(arr: T[]): T[] {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-function prioritise(arr: string[], src: string): string[] {
-  const idx = arr.indexOf(src);
-  if (idx <= 0) return arr;
-  const out = [...arr];
-  out.splice(idx, 1);
-  out.unshift(src);
-  return out;
-}
-
-function deprioritise(arr: string[], src: string): string[] {
-  const idx = arr.indexOf(src);
-  if (idx === -1 || arr.length <= 1) return arr;
-  const out = [...arr];
-  out.splice(idx, 1);
-  out.push(src);
-  return out;
-}
-
-function buildCandidates(char: string, tier: number, isFirst: boolean, usedByChar: UsedByChar): string[] {
-  let pool = shuffle(buildPool(char));
-  if (isFirst) {
-    const prev = lastFirstSrc.get(char);
-    if (prev) pool = deprioritise(pool, prev);
-  }
-  const used = usedByChar.get(char);
-  if (used) for (const src of used) pool = deprioritise(pool, src);
-  pool = prioritise(pool, tierSrc(char, tier));
-  return pool;
-}
-
-// ── per-letter component — owns its own wrapper span ─────────────────────────
+// ── per-letter image — falls back to a CSS scrap if the file is missing ──────
 
 function LetterImage({
   char,
-  tier,
-  isFirst,
-  usedByChar,
+  src,
   k,
-  intro,
-  introDelay,
-  idx,
+  onResolved,
 }: {
   char: string;
-  tier: number;
-  isFirst: boolean;
-  usedByChar: UsedByChar;
+  src: string;
   k: number;
-  intro: boolean;
-  introDelay: number;
-  idx: number;
+  onResolved: () => void;
 }) {
-  const [candidates, setCandidates] = useState<string[]>([`/letters/${char}.png`]);
-  const [attempt, setAttempt] = useState(0);
-  // loaded = image has fired onLoad (or we've fallen through to ScrapLetter)
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    setCandidates(buildCandidates(char, tier, isFirst, usedByChar));
-    setAttempt(0);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // When all image attempts exhaust we fall back to ScrapLetter — mark loaded
-  useEffect(() => {
-    if (attempt >= candidates.length) setLoaded(true);
-  }, [attempt, candidates.length]);
-
-  const isAlt = idx % 2 === 1;
-  const spanClass = intro
-    ? `stop-letter${isAlt ? " stop-letter--alt" : ""}${loaded ? " loaded" : ""}`
-    : "stop-letter-static";
-  const spanStyle = intro
-    ? { animationDelay: `${(introDelay + idx * STAGGER).toFixed(2)}s` }
-    : undefined;
-
+  const [failed, setFailed] = useState(false);
   const transform = `translateY(${DYS[k % DYS.length]}em) rotate(${ROTS[k % ROTS.length]}deg) scale(${SCALES[k % SCALES.length]})`;
 
-  const content =
-    attempt >= candidates.length ? (
-      <ScrapLetter char={char} k={k} />
-    ) : (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        src={candidates[attempt]}
-        alt=""
-        aria-hidden="true"
-        draggable={false}
-        className="ransom-img"
-        style={{ ["--lt" as string]: transform }}
-        onLoad={() => {
-          if (!usedByChar.has(char)) usedByChar.set(char, new Set());
-          usedByChar.get(char)!.add(candidates[attempt]);
-          if (isFirst) lastFirstSrc.set(char, candidates[attempt]);
-          setLoaded(true);
-        }}
-        onError={() => setAttempt((a) => a + 1)}
-      />
-    );
+  if (failed) return <ScrapLetter char={char} k={k} />;
 
   return (
-    <span className={spanClass} style={spanStyle}>
-      {content}
-    </span>
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={src}
+      alt=""
+      aria-hidden="true"
+      draggable={false}
+      className="ransom-img"
+      style={{ ["--lt" as string]: transform }}
+      onLoad={onResolved}
+      onError={() => {
+        // stale manifest safety net: count it so the word never hangs
+        setFailed(true);
+        onResolved();
+      }}
+    />
   );
 }
 
-// ── main component ────────────────────────────────────────────────────────────
+// ── main component ──────────────────────────────────────────────────────────
+
+type Item =
+  | { kind: "space"; i: number }
+  | { kind: "scrap"; i: number; raw: string }
+  | { kind: "img"; i: number; raw: string; char: string; src: string };
 
 export default function RansomImageText({
   text,
@@ -158,50 +83,81 @@ export default function RansomImageText({
   intro?: boolean;
   introDelay?: number;
 }) {
-  const tierRef = useRef<number | null>(null);
-  if (tierRef.current === null) {
-    tierRef.current = (wordTierCursor++ % NUM_TIERS) + 1;
-  }
-  const tier = tierRef.current;
+  // tier derived from the seed → deterministic, and adjacent words (different
+  // seeds) tend to land on different batches. Change a title's seed to reroll.
+  const tier = (seed % NUM_TIERS) + 1;
 
-  const usedByChar: UsedByChar = new Map();
-  const seenChars = new Set<string>();
+  // resolve every character once, at render time (pure — no randomness)
+  const seen: Record<string, number> = {};
+  const items: Item[] = text.split("").map((raw, i) => {
+    if (raw === " ") return { kind: "space", i };
+    const char = raw.toLowerCase();
+    if (!/^[a-z0-9]$/.test(char)) return { kind: "scrap", i, raw };
+    const occurrence = seen[char] ?? 0;
+    seen[char] = occurrence + 1;
+    const src = pickSrc(char, occurrence, tier);
+    return src ? { kind: "img", i, raw, char, src } : { kind: "scrap", i, raw };
+  });
+
+  const imgCount = items.reduce((n, it) => (it.kind === "img" ? n + 1 : n), 0);
+
+  // word-level gate: the whole cascade waits until every glyph image has
+  // resolved (or the timeout), so each letter's stagger clock starts together
+  // and the left→right order is guaranteed regardless of load timing.
+  const [ready, setReady] = useState(!intro);
+  const loadedRef = useRef(0);
+
+  useEffect(() => {
+    if (!intro) return;
+    loadedRef.current = 0;
+    if (imgCount === 0) {
+      setReady(true);
+      return;
+    }
+    setReady(false);
+    const t = setTimeout(() => setReady(true), READY_TIMEOUT);
+    return () => clearTimeout(t);
+  }, [intro, imgCount, text]);
+
+  const handleResolved = () => {
+    loadedRef.current += 1;
+    if (loadedRef.current >= imgCount) setReady(true);
+  };
+
+  const wordClass = [
+    "ransom-img-word",
+    className,
+    intro && ready ? "ready" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
-    <span className={`ransom-img-word ${className}`} aria-label={text} role="text">
-      {text.split("").map((raw, i) => {
-        if (raw === " ") {
-          return <span key={i} className="ransom-space" aria-hidden="true" />;
+    <span className={wordClass} aria-label={text} role="text">
+      {items.map((it) => {
+        if (it.kind === "space") {
+          return <span key={it.i} className="ransom-space" aria-hidden="true" />;
         }
-        const char = raw.toLowerCase();
-        if (!/^[a-z0-9]$/.test(char)) {
-          // Non-alpha: CSS scrap letter, always considered "loaded"
-          const spanClass = intro
-            ? `stop-letter${i % 2 === 1 ? " stop-letter--alt" : ""} loaded`
-            : "stop-letter-static";
-          const spanStyle = intro
-            ? { animationDelay: `${(introDelay + i * STAGGER).toFixed(2)}s` }
-            : undefined;
-          return (
-            <span key={i} className={spanClass} style={spanStyle}>
-              <ScrapLetter char={raw} k={i + seed} />
-            </span>
-          );
-        }
-        const isFirst = !seenChars.has(char);
-        seenChars.add(char);
+        const spanClass = intro
+          ? `stop-letter${it.i % 2 === 1 ? " stop-letter--alt" : ""}`
+          : "stop-letter-static";
+        const spanStyle = intro
+          ? { animationDelay: `${(introDelay + it.i * STAGGER).toFixed(2)}s` }
+          : undefined;
+
         return (
-          <LetterImage
-            key={`${char}-${i}`}
-            char={char}
-            tier={tier}
-            isFirst={isFirst}
-            usedByChar={usedByChar}
-            k={i + seed}
-            intro={intro}
-            introDelay={introDelay}
-            idx={i}
-          />
+          <span key={it.i} className={spanClass} style={spanStyle}>
+            {it.kind === "img" ? (
+              <LetterImage
+                char={it.char}
+                src={it.src}
+                k={it.i + seed}
+                onResolved={handleResolved}
+              />
+            ) : (
+              <ScrapLetter char={it.raw} k={it.i + seed} />
+            )}
+          </span>
         );
       })}
     </span>

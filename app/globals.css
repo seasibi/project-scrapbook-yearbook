@@ -615,19 +615,20 @@ body.js-ready .reveal.visible {
 }
 .stop-letter {
   animation: stopMotionIn 0.85s step-end both;
-  /* wait until the image inside has loaded before playing */
+  /* hold paused until the whole word is ready, so the cascade starts together */
   animation-play-state: paused;
 }
 .stop-letter--alt {
   animation-name: stopMotionInAlt;
 }
-/* image loaded — allow the animation to run */
-.stop-letter.loaded {
+/* every glyph image loaded (or timed out) — the staggered cascade plays as one,
+   guaranteeing strict left→right order regardless of per-image load timing */
+.ransom-img-word.ready .stop-letter {
   animation-play-state: running;
 }
 
-/* inside a scroll-revealed container the intro waits until the wrapper
-   gets .visible — always beats the .loaded class */
+/* inside a scroll-revealed container the intro also waits until the wrapper
+   gets .visible — always beats .ready */
 body.js-ready .reveal:not(.visible) .stop-letter {
   animation-play-state: paused !important;
 }

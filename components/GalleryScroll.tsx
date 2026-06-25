@@ -76,11 +76,11 @@ const CHAPTERS: Chapter[] = [
     pieces: [
       { label: "img14", kind: "polaroid", x: 2,  y: 11, w: 23, rot: -3, tape: "plain" },
       { label: "img15", kind: "photo",    x: 29, y: 13, w: 25, rot: 2,  clip: true },
-      { label: "img16", kind: "polaroid", x: 55, y: 11, w: 23, rot: -1 },
-      { label: "img17", kind: "note",     x: 79, y: 13, w: 18, rot: 3 },
+      { label: "img16", kind: "polaroid", x: 53, y: 6,  w: 35, rot: -1 },
+      { label: "img17", kind: "note",     x: 57, y: 41, w: 32, rot: 3 },
       { label: "img18", kind: "polaroid", x: 1,  y: 46, w: 27, rot: 2 },
-      { label: "img19", kind: "photo",    x: 31, y: 44, w: 32, rot: -2 },
-      { label: "img20", kind: "polaroid", x: 68, y: 46, w: 28, rot: 3 },
+      { label: "img19", kind: "photo",    x: 28, y: 46, w: 30, rot: -2 },
+      { label: "img20", kind: "polaroid", x: 70, y: 64, w: 27, rot: 3 },
     ],
     doodles: [
       { label: "scrap4", x: 4,  y: 84, w: 9, rot: 4 },
