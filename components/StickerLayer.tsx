@@ -40,7 +40,7 @@ interface ActiveResize {
   scale: number;
 }
 
-const SECTIONS = ["home", "yearbook", "portraits", "gallery", "dedications", "download"];
+const SECTIONS = ["home", "yearbook", "portraits", "gallery", "dedications"];
 
 function detectSection(clientX: number, clientY: number): string {
   for (const id of SECTIONS) {
@@ -64,7 +64,7 @@ function toSectionPct(
     const lr = layerEl.getBoundingClientRect();
     return {
       xPct: ((clientX - lr.left) / lr.width) * 100,
-      yPct: ((clientY - lr.top) / lr.height) * 100,
+      yPct: ((clientY - lr.top) / lr.width) * 100,
     };
   }
   const el = document.getElementById(sectionId);
@@ -72,13 +72,13 @@ function toSectionPct(
     const lr = layerEl.getBoundingClientRect();
     return {
       xPct: ((clientX - lr.left) / lr.width) * 100,
-      yPct: ((clientY - lr.top) / lr.height) * 100,
+      yPct: ((clientY - lr.top) / lr.width) * 100,
     };
   }
   const r = el.getBoundingClientRect();
   return {
     xPct: ((clientX - r.left) / r.width) * 100,
-    yPct: ((clientY - r.top) / r.height) * 100,
+    yPct: ((clientY - r.top) / r.width) * 100,
   };
 }
 
@@ -87,16 +87,24 @@ function stickerPosition(
   layerEl: HTMLDivElement
 ): { left: string; top: string } | null {
   if (sticker.section === "page" || !sticker.section) {
-    return { left: `${sticker.xPct}%`, top: `${sticker.yPct}%` };
+    const lr = layerEl.getBoundingClientRect();
+    return {
+      left: `${(sticker.xPct / 100) * lr.width}px`,
+      top: `${(sticker.yPct / 100) * lr.width}px`,
+    };
   }
   const sectionEl = document.getElementById(sticker.section);
   if (!sectionEl) {
-    return { left: `${sticker.xPct}%`, top: `${sticker.yPct}%` };
+    const lr = layerEl.getBoundingClientRect();
+    return {
+      left: `${(sticker.xPct / 100) * lr.width}px`,
+      top: `${(sticker.yPct / 100) * lr.width}px`,
+    };
   }
   const lr = layerEl.getBoundingClientRect();
   const sr = sectionEl.getBoundingClientRect();
   const x = sr.left - lr.left + (sticker.xPct / 100) * sr.width;
-  const y = sr.top - lr.top + (sticker.yPct / 100) * sr.height;
+  const y = sr.top - lr.top + (sticker.yPct / 100) * sr.width;
   return { left: `${x}px`, top: `${y}px` };
 }
 
@@ -233,8 +241,15 @@ export default function StickerLayer() {
     if (!textDraft.trim() || !user || placingText) return;
     setPlacingText(true);
     try {
-      const xPct = 30 + Math.random() * 40;
-      const yPct = 30 + Math.random() * 30;
+      const cx = window.innerWidth / 2;
+      const cy = window.innerHeight / 2;
+      const section = detectSection(cx, cy);
+      const { xPct, yPct } = toSectionPct(
+        cx + (Math.random() * 100 - 50),
+        cy + (Math.random() * 60 - 30),
+        section,
+        layerRef.current!
+      );
       const rotation = Math.round((Math.random() * 20 - 10) * 10) / 10;
       const res = await fetch("/api/stickers", {
         method: "POST",
@@ -243,7 +258,7 @@ export default function StickerLayer() {
           stickerId: "text",
           textContent: textDraft.trim().slice(0, 30),
           textFont,
-          xPct, yPct, rotation, scale: 1, section: "page",
+          xPct, yPct, rotation, scale: 1, section,
         }),
       });
       const data = await res.json();
@@ -279,8 +294,15 @@ export default function StickerLayer() {
     if (!uploadPreview || !user || placingUpload) return;
     setPlacingUpload(true);
     try {
-      const xPct = 30 + Math.random() * 40;
-      const yPct = 30 + Math.random() * 30;
+      const cx = window.innerWidth / 2;
+      const cy = window.innerHeight / 2;
+      const section = detectSection(cx, cy);
+      const { xPct, yPct } = toSectionPct(
+        cx + (Math.random() * 100 - 50),
+        cy + (Math.random() * 60 - 30),
+        section,
+        layerRef.current!
+      );
       const rotation = Math.round((Math.random() * 20 - 10) * 10) / 10;
       const res = await fetch("/api/stickers", {
         method: "POST",
@@ -288,7 +310,7 @@ export default function StickerLayer() {
         body: JSON.stringify({
           stickerId: "upload",
           textContent: uploadPreview,
-          xPct, yPct, rotation, scale: 1, section: "page",
+          xPct, yPct, rotation, scale: 1, section,
         }),
       });
       const data = await res.json();
@@ -339,7 +361,7 @@ export default function StickerLayer() {
     const refRect = sectionEl ? sectionEl.getBoundingClientRect() : layerRef.current.getBoundingClientRect();
 
     const newX = Math.max(1, Math.min(99, drag.origXPct + ((e.clientX - drag.startPx) / refRect.width) * 100));
-    const newY = Math.max(1, Math.min(99, drag.origYPct + ((e.clientY - drag.startPy) / refRect.height) * 100));
+    const newY = drag.origYPct + ((e.clientY - drag.startPy) / refRect.width) * 100;
     drag.xPct = newX;
     drag.yPct = newY;
     setPlaced((prev) => prev.map((s) => (s.id === sticker.id ? { ...s, xPct: newX, yPct: newY } : s)));
