@@ -6,6 +6,7 @@ import CountdownGate from "@/components/CountdownGate";
 import { AuthProvider } from "@/components/AuthContext";
 import RansomText from "@/components/RansomText";
 import RansomImageText from "@/components/RansomImageText";
+import HeroRansom from "@/components/HeroRansom";
 import PortraitsTab from "@/components/PortraitsTab";
 import GalleryScroll from "@/components/GalleryScroll";
 import DedicationsTab from "@/components/DedicationsTab";
@@ -152,13 +153,7 @@ function ShellContent({
           {/* ── hero ──────────────────────────────────── */}
           <section className="hero" id="home">
             <h1 className="hero-title">
-              <RansomImageText
-                text="The"
-                seed={2}
-                className="ransom-img--sm"
-                introDelay={0.3}
-              />
-              <RansomImageText text="Archive" seed={11} introDelay={0.75} />
+              <HeroRansom />
             </h1>
             <p className="hero-sub pixel-font stagger-4">
               ✦ scrapbook edition · class of 2026 ✦

@@ -500,18 +500,29 @@ body.js-ready .reveal.visible {
   text-align: center;
   position: relative;
 }
-.hero::after {
-  content: "";
-  position: absolute;
-  bottom: 18px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(320px, 60vw);
-  height: 22px;
-  background: var(--tape);
-  opacity: 0.45;
-  border-radius: 2px;
-  animation: fadeIn 1s ease both 1.6s;
+
+.hero-ransom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(8px, 2vw, 20px);
+}
+.hero-ransom-word {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.04em;
+}
+.hero-ransom-word--sm {
+  font-size: 0.55em;
+}
+.hero-ransom-word--sm .ransom-img {
+  height: clamp(1.7rem, 5vw, 3rem);
+}
+.hero-ransom-letter {
+  display: inline-block;
+  will-change: transform, opacity;
 }
 
 .stagger-1 { animation: fadeDown 0.7s ease both 0.1s; }
@@ -588,14 +599,6 @@ body.js-ready .reveal.visible {
 .memory-word {
   grid-area: w;
   white-space: nowrap;
-}
-
-.scroll-hint {
-  position: absolute;
-  bottom: 26px;
-  font-size: 1.8rem;
-  color: var(--accent);
-  animation: floatY 1.8s ease-in-out infinite, fadeIn 0.8s ease both 1.3s;
 }
 
 /* ── ransom-note lettering (Canva cut-out style) ─────────── */
