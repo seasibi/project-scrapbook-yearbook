@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import CountdownGate from "@/components/CountdownGate";
 import { AuthProvider } from "@/components/AuthContext";
 import RansomText from "@/components/RansomText";
@@ -66,8 +68,38 @@ function ShellContent({
   const [activeSection, setActiveSection] = useState("yearbook");
   const [menuOpen, setMenuOpen] = useState(false);
   const mainRef = useRef<HTMLDivElement>(null);
+  const flipbookRef = useRef<HTMLDivElement>(null);
 
   useScrollReveal();
+
+  useLayoutEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    if (!flipbookRef.current) return;
+
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) return;
+
+    gsap.set(flipbookRef.current, { scale: 0.8, opacity: 0 });
+
+    gsap.to(flipbookRef.current, {
+      scale: 1,
+      opacity: 1,
+      duration: 0.9,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: flipbookRef.current,
+        start: "top 65%",
+        toggleActions: "play none none none",
+      },
+    });
+
+    return () => {
+      ScrollTrigger.getAll().forEach((st) => {
+        if (st.trigger === flipbookRef.current) st.kill();
+      });
+    };
+  }, []);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -180,7 +212,9 @@ function ShellContent({
             <p className="section-sub section-sub--center pixel-font reveal">
               flip through the pages — drag a corner
             </p>
-            <YearbookFlipbook students={students} pages={yearbookPages} />
+            <div ref={flipbookRef} className="flipbook-scroll-wrap">
+              <YearbookFlipbook students={students} pages={yearbookPages} />
+            </div>
           </section>
 
           <div className="section-divider" aria-hidden="true"><span className="section-divider-mark">✦</span></div>

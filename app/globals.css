@@ -227,6 +227,23 @@ body.js-ready .reveal.visible {
   font-style: italic;
   text-wrap: balance;
   animation: fadeUp 0.8s ease both 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15em;
+  flex-wrap: wrap;
+}
+.gate-title-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15em;
+}
+.gate-title-heart-img {
+  height: clamp(2rem, 5.5vw, 3.5rem);
+  width: auto;
+  filter: drop-shadow(2px 3px 2px var(--paper-shadow));
+  animation: fadeUp 0.8s ease both 1.4s;
+  transform: rotate(-6deg);
 }
 
 .gate-sub {

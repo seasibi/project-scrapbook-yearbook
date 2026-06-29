@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
+import RansomImageText from "@/components/RansomImageText";
 
 const GRADUATION = new Date("2026-07-03T00:00:00");
-const EARLY_ACCESS_PASSWORD = "memoirs2026";
+const EARLY_ACCESS_PASSWORD = "nextpass";
 const SESSION_KEY = "memoirs-unlocked";
 
 interface TimeLeft {
@@ -75,7 +76,20 @@ export default function CountdownGate({ children }: { children: ReactNode }) {
   return (
     <div className="countdown-gate">
       <p className="gate-eyebrow pixel-font">class of 2026</p>
-      <h1 className="gate-title">thank u, next &lt;3</h1>
+      <h1 className="gate-title">
+        <RansomImageText text="thank u," seed={7} introDelay={0.2} />
+        <br />
+        <span className="gate-title-line">
+          <RansomImageText text="next" seed={14} introDelay={0.9} />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={`/letters/heart-${((Date.now() / 86400000 | 0) % 4) + 1}.png`}
+            alt="heart"
+            className="gate-title-heart-img"
+            draggable={false}
+          />
+        </span>
+      </h1>
       <p className="gate-kicker pixel-font">i&#39;m so f*cking grateful</p>
       <p className="gate-sub pixel-font">unlocks on july 3, 2026</p>
 
