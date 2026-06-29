@@ -31,6 +31,17 @@ export default function CountdownGate({ children }: { children: ReactNode }) {
   const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(null);
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
+  const [seeds] = useState(() => [
+    Math.floor(Math.random() * 100),
+    Math.floor(Math.random() * 100),
+  ]);
+  const [heartIdx] = useState(() => Math.floor(Math.random() * 4) + 1);
+  const [deco] = useState(() => [
+    { src: "/letters/star-1.png", x: 5 + Math.random() * 12, y: 5 + Math.random() * 10, rot: Math.round((Math.random() * 30 - 15) * 10) / 10, scale: 0.7 + Math.random() * 0.4 },
+    { src: "/letters/human-1.png", x: 80 + Math.random() * 12, y: 6 + Math.random() * 10, rot: Math.round((Math.random() * 24 - 12) * 10) / 10, scale: 0.7 + Math.random() * 0.4 },
+    { src: "/letters/star-1.png", x: 78 + Math.random() * 14, y: 75 + Math.random() * 12, rot: Math.round((Math.random() * 30 - 15) * 10) / 10, scale: 0.6 + Math.random() * 0.4 },
+    { src: "/letters/human-1.png", x: 3 + Math.random() * 12, y: 78 + Math.random() * 12, rot: Math.round((Math.random() * 24 - 12) * 10) / 10, scale: 0.6 + Math.random() * 0.4 },
+  ]);
 
   useEffect(() => {
     let timer: number | undefined;
@@ -77,13 +88,17 @@ export default function CountdownGate({ children }: { children: ReactNode }) {
     <div className="countdown-gate">
       <p className="gate-eyebrow pixel-font">class of 2026</p>
       <h1 className="gate-title">
-        <RansomImageText text="thank u," seed={7} introDelay={0.2} />
+        <span className="gate-title-line">
+          <RansomImageText text="thank u" seed={seeds[0]} introDelay={0.2} />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/letters/comma-1.png" alt="," className="gate-title-comma-img" draggable={false} />
+        </span>
         <br />
         <span className="gate-title-line">
-          <RansomImageText text="next" seed={14} introDelay={0.9} />
+          <RansomImageText text="next" seed={seeds[1]} introDelay={0.9} />
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={`/letters/heart-${((Date.now() / 86400000 | 0) % 4) + 1}.png`}
+            src={`/letters/heart-${heartIdx}.png`}
             alt="heart"
             className="gate-title-heart-img"
             draggable={false}
@@ -113,21 +128,48 @@ export default function CountdownGate({ children }: { children: ReactNode }) {
         </div>
       )}
 
-      <form onSubmit={submit} className="gate-form">
-        <label htmlFor="gate-password" className="gate-label-text pixel-font">do you have an early access?</label>
-        <input
-          id="gate-password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className={`gate-input pixel-font ${error ? "glitch" : ""}`}
-          aria-label="Early access password"
+      <form onSubmit={submit} className="gate-access">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/letters/earlyaccess-square-1.png"
+          alt=""
+          className="gate-access-bg"
+          draggable={false}
         />
-        <button type="submit" className="gate-button pixel-font">
-          enter
-        </button>
+        <div className="gate-access-content">
+          <label htmlFor="gate-password" className="gate-access-label pixel-font">do you have an early access?</label>
+          <input
+            id="gate-password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className={`gate-access-input pixel-font ${error ? "glitch" : ""}`}
+            aria-label="Early access password"
+            placeholder="password"
+          />
+          <button type="submit" className="gate-access-btn pixel-font">
+            enter
+          </button>
+          {error && <p className="gate-error pixel-font">wrong password</p>}
+        </div>
       </form>
-      {error && <p className="gate-error pixel-font">wrong password — try again</p>}
+
+      {deco.map((d, i) => (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          key={i}
+          src={d.src}
+          alt=""
+          aria-hidden="true"
+          draggable={false}
+          className="gate-deco"
+          style={{
+            left: `${d.x}%`,
+            top: `${d.y}%`,
+            transform: `rotate(${d.rot}deg) scale(${d.scale})`,
+          }}
+        />
+      ))}
     </div>
   );
 }
