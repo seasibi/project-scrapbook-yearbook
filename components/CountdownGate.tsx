@@ -43,15 +43,25 @@ export default function CountdownGate({ children }: { children: ReactNode }) {
       "/letters/flower-1.png", "/letters/flower-2.png",
       "/letters/human-1.png",
     ];
-    const zones = [
-      { xMin: 1, xMax: 13, yMin: 2, yMax: 14 },
-      { xMin: 85, xMax: 96, yMin: 2, yMax: 14 },
-      { xMin: 1, xMax: 11, yMin: 30, yMax: 45 },
-      { xMin: 87, xMax: 97, yMin: 30, yMax: 45 },
-      { xMin: 1, xMax: 13, yMin: 60, yMax: 75 },
-      { xMin: 85, xMax: 96, yMin: 60, yMax: 75 },
-      { xMin: 1, xMax: 11, yMin: 85, yMax: 95 },
-      { xMin: 87, xMax: 96, yMin: 85, yMax: 95 },
+    const wide = typeof window !== "undefined" && window.innerWidth > 900;
+    const zones = wide ? [
+      { xMin: 2, xMax: 12, yMin: 22, yMax: 38 },
+      { xMin: 86, xMax: 95, yMin: 22, yMax: 38 },
+      { xMin: 2, xMax: 14, yMin: 48, yMax: 62 },
+      { xMin: 84, xMax: 96, yMin: 48, yMax: 62 },
+      { xMin: 2, xMax: 12, yMin: 72, yMax: 88 },
+      { xMin: 86, xMax: 96, yMin: 72, yMax: 88 },
+      { xMin: 14, xMax: 26, yMin: 80, yMax: 93 },
+      { xMin: 72, xMax: 84, yMin: 80, yMax: 93 },
+    ] : [
+      { xMin: 1, xMax: 11, yMin: 25, yMax: 38 },
+      { xMin: 87, xMax: 96, yMin: 25, yMax: 38 },
+      { xMin: 1, xMax: 11, yMin: 48, yMax: 60 },
+      { xMin: 87, xMax: 97, yMin: 48, yMax: 60 },
+      { xMin: 1, xMax: 11, yMin: 72, yMax: 85 },
+      { xMin: 87, xMax: 96, yMin: 72, yMax: 85 },
+      { xMin: 1, xMax: 11, yMin: 88, yMax: 96 },
+      { xMin: 87, xMax: 96, yMin: 88, yMax: 96 },
     ];
     const shuffled = [...pool].sort(() => Math.random() - 0.5);
     return zones.map((z, i) => ({
@@ -190,6 +200,11 @@ export default function CountdownGate({ children }: { children: ReactNode }) {
           }}
         />
       ))}
+
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/letters/upper-right-corner.png" alt="" aria-hidden="true" draggable={false} className="gate-corner gate-corner--tr" />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/letters/lower-left-corner.png" alt="" aria-hidden="true" draggable={false} className="gate-corner gate-corner--bl" />
     </div>
   );
 }
