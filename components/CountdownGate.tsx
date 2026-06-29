@@ -36,12 +36,32 @@ export default function CountdownGate({ children }: { children: ReactNode }) {
     Math.floor(Math.random() * 100),
   ]);
   const [heartIdx] = useState(() => Math.floor(Math.random() * 4) + 1);
-  const [deco] = useState(() => [
-    { src: "/letters/star-1.png", x: 5 + Math.random() * 12, y: 5 + Math.random() * 10, rot: Math.round((Math.random() * 30 - 15) * 10) / 10, scale: 0.7 + Math.random() * 0.4 },
-    { src: "/letters/human-1.png", x: 80 + Math.random() * 12, y: 6 + Math.random() * 10, rot: Math.round((Math.random() * 24 - 12) * 10) / 10, scale: 0.7 + Math.random() * 0.4 },
-    { src: "/letters/star-1.png", x: 78 + Math.random() * 14, y: 75 + Math.random() * 12, rot: Math.round((Math.random() * 30 - 15) * 10) / 10, scale: 0.6 + Math.random() * 0.4 },
-    { src: "/letters/human-1.png", x: 3 + Math.random() * 12, y: 78 + Math.random() * 12, rot: Math.round((Math.random() * 24 - 12) * 10) / 10, scale: 0.6 + Math.random() * 0.4 },
-  ]);
+  const [deco] = useState(() => {
+    const pool = [
+      "/letters/star-1.png", "/letters/star-2.png",
+      "/letters/cat-1.png", "/letters/bunny-1.png",
+      "/letters/flower-1.png", "/letters/flower-2.png",
+      "/letters/human-1.png",
+    ];
+    const zones = [
+      { xMin: 1, xMax: 13, yMin: 2, yMax: 14 },
+      { xMin: 85, xMax: 96, yMin: 2, yMax: 14 },
+      { xMin: 1, xMax: 11, yMin: 30, yMax: 45 },
+      { xMin: 87, xMax: 97, yMin: 30, yMax: 45 },
+      { xMin: 1, xMax: 13, yMin: 60, yMax: 75 },
+      { xMin: 85, xMax: 96, yMin: 60, yMax: 75 },
+      { xMin: 1, xMax: 11, yMin: 85, yMax: 95 },
+      { xMin: 87, xMax: 96, yMin: 85, yMax: 95 },
+    ];
+    const shuffled = [...pool].sort(() => Math.random() - 0.5);
+    return zones.map((z, i) => ({
+      src: shuffled[i % shuffled.length],
+      x: z.xMin + Math.random() * (z.xMax - z.xMin),
+      y: z.yMin + Math.random() * (z.yMax - z.yMin),
+      rot: Math.round((Math.random() * 30 - 15) * 10) / 10,
+      scale: 0.5 + Math.random() * 0.6,
+    }));
+  });
 
   useEffect(() => {
     let timer: number | undefined;
