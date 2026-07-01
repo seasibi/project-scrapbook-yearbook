@@ -391,13 +391,23 @@ body.js-ready .reveal.visible {
   opacity: 0.88;
 }
 
+.hero-sticker {
+  position: absolute;
+  width: clamp(60px, 8vw, 130px);
+  height: auto;
+  pointer-events: none;
+  filter: drop-shadow(1px 2px 3px var(--paper-shadow));
+  opacity: 0;
+  z-index: 0;
+}
+
 .gate-corner {
   position: absolute;
   width: clamp(80px, 18vw, 240px);
   height: auto;
   pointer-events: none;
   filter: drop-shadow(2px 3px 3px var(--paper-shadow));
-  animation: fadeIn 1s ease both 1.8s;
+  opacity: 0;
 }
 .gate-corner--tr {
   top: 0;
@@ -414,7 +424,7 @@ body.js-ready .reveal.visible {
   height: auto;
   pointer-events: none;
   filter: drop-shadow(1px 2px 2px var(--paper-shadow));
-  animation: fadeIn 1s ease both 1.6s;
+  opacity: 0;
 }
 
 .gate-label-text {

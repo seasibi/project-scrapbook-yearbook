@@ -69,6 +69,36 @@ function ShellContent({
   const [menuOpen, setMenuOpen] = useState(false);
   const mainRef = useRef<HTMLDivElement>(null);
   const flipbookRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLElement>(null);
+
+  const [heroStickers] = useState(() => {
+    const pool = Array.from({ length: 19 }, (_, i) => `/letters/sticker/sticker-${i + 1}.png`);
+    const shuffled = [...pool].sort(() => Math.random() - 0.5);
+
+    // 10 zones guaranteeing all four sides.
+    // Right/bottom limits account for sticker width (~10%) and height (~14%)
+    // so the sticker never bleeds outside the hero bounds.
+    const zones = [
+      { xMin: 2,  xMax: 13, yMin: 6,  yMax: 20 }, // top-left
+      { xMin: 77, xMax: 88, yMin: 6,  yMax: 20 }, // top-right  (right edge ≤ 98%)
+      { xMin: 2,  xMax: 11, yMin: 26, yMax: 48 }, // left-upper
+      { xMin: 2,  xMax: 11, yMin: 50, yMax: 66 }, // left-lower
+      { xMin: 78, xMax: 88, yMin: 26, yMax: 48 }, // right-upper (right edge ≤ 98%)
+      { xMin: 78, xMax: 88, yMin: 50, yMax: 66 }, // right-lower (right edge ≤ 98%)
+      { xMin: 3,  xMax: 22, yMin: 70, yMax: 83 }, // bottom-left (bottom edge ≤ 97%)
+      { xMin: 26, xMax: 46, yMin: 72, yMax: 83 }, // bottom-center-left
+      { xMin: 52, xMax: 72, yMin: 72, yMax: 83 }, // bottom-center-right
+      { xMin: 74, xMax: 85, yMin: 70, yMax: 83 }, // bottom-right (right edge ≤ 95%)
+    ];
+
+    return zones.map((z, i) => ({
+      src: shuffled[i % shuffled.length],
+      x: z.xMin + Math.random() * (z.xMax - z.xMin),
+      y: z.yMin + Math.random() * (z.yMax - z.yMin),
+      rot: Math.round((Math.random() * 28 - 14) * 10) / 10,
+      scale: 0.45 + Math.random() * 0.55,
+    }));
+  });
 
   useScrollReveal();
 
@@ -99,6 +129,61 @@ function ShellContent({
         if (st.trigger === flipbookRef.current) st.kill();
       });
     };
+  }, []);
+
+  // hero sticker scatter → land entry
+  useLayoutEffect(() => {
+    if (!heroRef.current) return;
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const els = Array.from(heroRef.current.querySelectorAll<HTMLElement>(".hero-sticker"));
+    if (els.length === 0) return;
+
+    if (prefersReduced) { gsap.set(els, { opacity: 1 }); return; }
+
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    els.forEach((el) => {
+      gsap.set(el, {
+        x: (Math.random() - 0.5) * vw * 1.6,
+        y: (Math.random() - 0.5) * vh * 1.4,
+        rotation: (Math.random() - 0.5) * 400,
+        scale: 0.2 + Math.random() * 0.3,
+        opacity: 1,
+      });
+    });
+
+    const tl = gsap.timeline({ delay: 1.6 });
+    tl.to(els, {
+      x: 0, y: 0,
+      rotation: (i) => parseFloat(els[i]?.dataset.finalRot ?? "0"),
+      scale: (i) => parseFloat(els[i]?.dataset.finalScale ?? "1"),
+      duration: 1.1,
+      stagger: { amount: 0.9, from: "random" },
+      ease: "steps(7)",
+    });
+    return () => { tl.kill(); };
+  }, []);
+
+  // hero sticker idle jitter
+  useEffect(() => {
+    if (!heroRef.current) return;
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) return;
+    const els = heroRef.current.querySelectorAll<HTMLElement>(".hero-sticker");
+    if (els.length === 0) return;
+    const tweens: gsap.core.Tween[] = [];
+    els.forEach((el) => {
+      tweens.push(gsap.to(el, {
+        x: `+=${(Math.random() - 0.5) * 16}`,
+        y: `+=${(Math.random() - 0.5) * 12}`,
+        rotation: `+=${(Math.random() - 0.5) * 10}`,
+        duration: 0.9 + Math.random() * 0.8,
+        repeat: -1, yoyo: true,
+        ease: "steps(3)",
+        delay: 3.8 + Math.random() * 0.6,
+      }));
+    });
+    return () => { tweens.forEach((t) => t.kill()); };
   }, []);
 
   useEffect(() => {
@@ -183,7 +268,7 @@ function ShellContent({
           </header>
 
           {/* ── hero ──────────────────────────────────── */}
-          <section className="hero" id="home">
+          <section className="hero" id="home" ref={heroRef}>
             <h1 className="hero-title">
               <HeroRansom />
             </h1>
@@ -197,6 +282,30 @@ function ShellContent({
                 <MemoryWords words={MEMORY_WORDS} />
               </span>
             </h2>
+
+            {heroStickers.map((s, i) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                key={i}
+                src={s.src}
+                alt=""
+                aria-hidden="true"
+                draggable={false}
+                className="hero-sticker"
+                data-final-rot={s.rot}
+                data-final-scale={s.scale}
+                style={{
+                  position: "absolute",
+                  left: `${s.x}%`,
+                  top: `${s.y}%`,
+                  width: "clamp(120px, 16vw, 260px)",
+                  height: "auto",
+                  pointerEvents: "none",
+                  opacity: 0,
+                  zIndex: 0,
+                }}
+              />
+            ))}
           </section>
 
           {/* ── yearbook flipbook ─────────────────────── */}

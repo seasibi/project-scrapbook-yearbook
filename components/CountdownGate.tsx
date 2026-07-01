@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
+import gsap from "gsap";
 import RansomImageText from "@/components/RansomImageText";
 
 const GRADUATION = new Date("2026-07-03T00:00:00");
@@ -73,6 +74,78 @@ export default function CountdownGate({ children }: { children: ReactNode }) {
     }));
   });
 
+  const gateRef = useRef<HTMLDivElement>(null);
+
+  // stop-motion scatter → land entry (runs before first paint so no flash)
+  useLayoutEffect(() => {
+    if (!gateRef.current) return;
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const els = Array.from(
+      gateRef.current.querySelectorAll<HTMLElement>(".gate-deco, .gate-corner")
+    );
+    if (els.length === 0) return;
+
+    if (prefersReduced) {
+      gsap.set(els, { opacity: 1 });
+      return;
+    }
+
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    els.forEach((el) => {
+      gsap.set(el, {
+        x: (Math.random() - 0.5) * vw * 1.6,
+        y: (Math.random() - 0.5) * vh * 1.4,
+        rotation: (Math.random() - 0.5) * 400,
+        scale: 0.2 + Math.random() * 0.3,
+        opacity: 1,
+      });
+    });
+
+    const tl = gsap.timeline({ delay: 0.35 });
+    tl.to(els, {
+      x: 0,
+      y: 0,
+      rotation: (i) => parseFloat(els[i]?.dataset.finalRot ?? "0"),
+      scale: (i) => parseFloat(els[i]?.dataset.finalScale ?? "1"),
+      duration: 1.1,
+      stagger: { amount: 0.9, from: "random" },
+      ease: "steps(7)",
+    });
+
+    return () => { tl.kill(); };
+  }, [unlocked]);
+
+  // idle stop-motion jitter — delayed until entry animation finishes (~2.4 s)
+  useEffect(() => {
+    if (!gateRef.current) return;
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) return;
+
+    const els = gateRef.current.querySelectorAll<HTMLElement>(".gate-deco, .gate-corner");
+    if (els.length === 0) return;
+
+    const tweens: gsap.core.Tween[] = [];
+    els.forEach((el) => {
+      tweens.push(
+        gsap.to(el, {
+          x: `+=${(Math.random() - 0.5) * 18}`,
+          y: `+=${(Math.random() - 0.5) * 14}`,
+          rotation: `+=${(Math.random() - 0.5) * 12}`,
+          duration: 0.8 + Math.random() * 0.8,
+          repeat: -1,
+          yoyo: true,
+          ease: "steps(3)",
+          delay: 2.5 + Math.random() * 0.5,
+        })
+      );
+    });
+
+    return () => { tweens.forEach((t) => t.kill()); };
+  }, [unlocked]);
+
   useEffect(() => {
     let timer: number | undefined;
     // the unlock decision needs sessionStorage, so it runs client-side in a
@@ -115,7 +188,7 @@ export default function CountdownGate({ children }: { children: ReactNode }) {
   if (unlocked) return <>{children}</>;
 
   return (
-    <div className="countdown-gate">
+    <div className="countdown-gate" ref={gateRef}>
       <p className="gate-eyebrow pixel-font">class of 2026</p>
       <h1 className="gate-title">
         <span className="gate-title-line">
@@ -193,18 +266,16 @@ export default function CountdownGate({ children }: { children: ReactNode }) {
           aria-hidden="true"
           draggable={false}
           className="gate-deco"
-          style={{
-            left: `${d.x}%`,
-            top: `${d.y}%`,
-            transform: `rotate(${d.rot}deg) scale(${d.scale})`,
-          }}
+          data-final-rot={d.rot}
+          data-final-scale={d.scale}
+          style={{ left: `${d.x}%`, top: `${d.y}%` }}
         />
       ))}
 
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/letters/upper-right-corner.png" alt="" aria-hidden="true" draggable={false} className="gate-corner gate-corner--tr" />
+      <img src="/letters/upper-right-corner.png" alt="" aria-hidden="true" draggable={false} className="gate-corner gate-corner--tr" data-final-rot="0" data-final-scale="1" />
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/letters/lower-left-corner.png" alt="" aria-hidden="true" draggable={false} className="gate-corner gate-corner--bl" />
+      <img src="/letters/lower-left-corner.png" alt="" aria-hidden="true" draggable={false} className="gate-corner gate-corner--bl" data-final-rot="0" data-final-scale="1" />
     </div>
   );
 }

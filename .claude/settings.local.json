@@ -10,7 +10,8 @@
       "Bash(node -e ' *)",
       "Bash(npm install *)",
       "Bash(npm run *)",
-      "mcp__visualize__show_widget"
+      "mcp__visualize__show_widget",
+      "Bash(grep -v \"^[a-z]-\\\\?[0-9]*\\\\.png$\")"
     ]
   },
   "hooks": {
