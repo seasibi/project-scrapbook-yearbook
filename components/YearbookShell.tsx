@@ -11,11 +11,13 @@ import RansomImageText from "@/components/RansomImageText";
 import HeroRansom from "@/components/HeroRansom";
 import PortraitsTab from "@/components/PortraitsTab";
 import GalleryScroll from "@/components/GalleryScroll";
+import PhotoCarousel from "@/components/PhotoCarousel";
+import MasterCoderMessage from "@/components/MasterCoderMessage";
 import DedicationsTab from "@/components/DedicationsTab";
 import StickerLayer from "@/components/StickerLayer";
 import { MemoryWords } from "@/components/animations";
 import { useScrollReveal } from "@/lib/useScrollReveal";
-import type { Student } from "@/types";
+import type { Student, GalleryPhoto } from "@/types";
 
 const YearbookFlipbook = dynamic(() => import("@/components/YearbookFlipbook"), {
   ssr: false,
@@ -28,6 +30,7 @@ const NAV = [
   { id: "yearbook", label: "yearbook" },
   { id: "portraits", label: "portraits" },
   { id: "gallery", label: "gallery" },
+  { id: "coder", label: "the coder" },
   { id: "dedications", label: "dedications" },
 ];
 
@@ -36,9 +39,11 @@ type Theme = "day" | "night";
 export default function YearbookShell({
   students,
   yearbookPages = [],
+  galleryPhotos = [],
 }: {
   students: Student[];
   yearbookPages?: string[];
+  galleryPhotos?: GalleryPhoto[];
 }) {
   // CountdownGate only mounts its children once unlocked, so all the
   // observers (scroll reveal, active nav section) must live inside
@@ -46,7 +51,11 @@ export default function YearbookShell({
   return (
     <AuthProvider>
       <CountdownGate>
-        <ShellContent students={students} yearbookPages={yearbookPages} />
+        <ShellContent
+          students={students}
+          yearbookPages={yearbookPages}
+          galleryPhotos={galleryPhotos}
+        />
       </CountdownGate>
     </AuthProvider>
   );
@@ -55,9 +64,11 @@ export default function YearbookShell({
 function ShellContent({
   students,
   yearbookPages = [],
+  galleryPhotos = [],
 }: {
   students: Student[];
   yearbookPages?: string[];
+  galleryPhotos?: GalleryPhoto[];
 }) {
   // safe to read localStorage in the initializer: ShellContent only mounts
   // client-side, after CountdownGate unlocks (it is never part of hydration)
@@ -209,6 +220,29 @@ function ShellContent({
     return () => observer.disconnect();
   }, []);
 
+  // gallery is one continuous oldest→recent timeline split into 4 bands:
+  // frames (chapter 1) → carousel → frames (chapters 2+3) → carousel, so the
+  // whole section reads chronologically with no photo repeated.
+  const FRAME1_COUNT = 13;
+  const FRAME3_COUNT = 17;
+  const carouselTotal = Math.max(
+    0,
+    galleryPhotos.length - FRAME1_COUNT - FRAME3_COUNT
+  );
+  const band2Count = Math.ceil(carouselTotal / 2);
+  const frame1Photos = galleryPhotos.slice(0, FRAME1_COUNT);
+  const band2Photos = galleryPhotos.slice(
+    FRAME1_COUNT,
+    FRAME1_COUNT + band2Count
+  );
+  const frame3Photos = galleryPhotos.slice(
+    FRAME1_COUNT + band2Count,
+    FRAME1_COUNT + band2Count + FRAME3_COUNT
+  );
+  const band4Photos = galleryPhotos.slice(
+    FRAME1_COUNT + band2Count + FRAME3_COUNT
+  );
+
   return (
     <div className="shell" ref={mainRef}>
           {/* ── sticky topbar ─────────────────────────── */}
@@ -349,7 +383,28 @@ function ShellContent({
             <p className="section-sub section-sub--center pixel-font reveal">
               a wall of memories — just keep scrolling
             </p>
-            <GalleryScroll />
+            <GalleryScroll chapterIds={["1"]} photos={frame1Photos} />
+            <PhotoCarousel photos={band2Photos} variant="polaroid" />
+            <GalleryScroll chapterIds={["2", "3"]} photos={frame3Photos} />
+            <PhotoCarousel
+              photos={band4Photos}
+              variant="polaroid"
+              title="and then..."
+              hint="all the way to the most recent memory"
+            />
+          </section>
+
+          <div className="section-divider" aria-hidden="true"><span className="section-divider-mark">✦</span></div>
+
+          {/* ── message from the master coder ─────────── */}
+          <section className="section" id="coder">
+            <div className="section-label section-label--center reveal">
+              <RansomImageText text="master coder" seed={14} className="ransom-img--label" />
+            </div>
+            <p className="section-sub section-sub--center pixel-font reveal">
+              ✦ a message from the master coder ✦
+            </p>
+            <MasterCoderMessage />
           </section>
 
           <div className="section-divider" aria-hidden="true"><span className="section-divider-mark">✦</span></div>

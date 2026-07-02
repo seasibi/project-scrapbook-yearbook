@@ -11,7 +11,11 @@
       "Bash(npm install *)",
       "Bash(npm run *)",
       "mcp__visualize__show_widget",
-      "Bash(grep -v \"^[a-z]-\\\\?[0-9]*\\\\.png$\")"
+      "Bash(grep -v \"^[a-z]-\\\\?[0-9]*\\\\.png$\")",
+      "mcp__visualize__read_me",
+      "PowerShell(npm run build 2>&1)",
+      "PowerShell(npm install exifr 2>&1)",
+      "PowerShell(npm run lint 2>&1)"
     ]
   },
   "hooks": {

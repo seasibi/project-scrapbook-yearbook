@@ -8,6 +8,11 @@ import type { Student } from "@/types";
 const TAPE_TILT = [-3, 2, -1.5, 2.5, -2, 1];
 const CARD_TILT = [-1.5, 1.2, -0.8, 1.6, -1.1, 0.9, -1.8, 1.4, -0.6, 1.3];
 
+// Drop badge images into public/letters/badge/ as badge-1.png, badge-2.png, …
+// Update the number here to match how many you've added.
+const BADGE_COUNT = 6;
+const BADGE_POOL = Array.from({ length: BADGE_COUNT }, (_, i) => `/letters/badge/badge-${i + 1}.png`);
+
 export default function PortraitsTab({ initial }: { initial: Student[] }) {
   const [query, setQuery] = useState("");
   const [students, setStudents] = useState<Student[]>(initial);
@@ -143,7 +148,7 @@ export default function PortraitsTab({ initial }: { initial: Student[] }) {
         </span>
       </div>
 
-      <div ref={gridRef}>
+      <div ref={gridRef} className="portraits-rows">
         {rows.map((row, ri) => (
           <div
             key={ri}
@@ -167,13 +172,68 @@ export default function PortraitsTab({ initial }: { initial: Student[] }) {
                       transformOrigin: "center",
                     }}
                   />
-                  <div className="portrait-frame">
-                    <StudentAvatar student={student} />
+                  <div style={{ position: "relative" }}>
+                    <div className="portrait-frame">
+                      <StudentAvatar student={student} />
+                    </div>
+                    {student.role && BADGE_POOL.length > 0 && (
+                      <div
+                        className="portrait-role-badge"
+                        aria-label={student.role}
+                        style={{
+                          position: "absolute",
+                          top: "-80px",
+                          right: "-50px",
+                          width: "clamp(100px, 16vw, 140px)",
+                          height: "clamp(100px, 16vw, 140px)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          zIndex: 2,
+                          borderRadius: "100%",
+                          overflow: "hidden",
+                          boxShadow: "1px 2px 6px rgba(0,0,0,0.22)",
+                          pointerEvents: "none",
+                          transform: `rotate(${((gi * 7 + 3) % 5) * 3 - 6}deg)`,
+                        }}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={BADGE_POOL[gi % BADGE_POOL.length]}
+                          alt=""
+                          aria-hidden="true"
+                          draggable={false}
+                          style={{
+                            position: "absolute",
+                            inset: 0,
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "contain",
+                          }}
+                        />
+                        <span
+                          className="pixel-font"
+                          style={{
+                            position: "relative",
+                            zIndex: 1,
+                            fontSize: "clamp(0.65rem, 1.1vw, 0.85rem)",
+                            lineHeight: 1.2,
+                            textAlign: "center",
+                            padding: "4px",
+                            wordBreak: "break-word",
+                            hyphens: "auto",
+                            maxWidth: "66%",
+                            textShadow: "0 1px 3px rgba(255,255,255,0.9), 0 0 6px rgba(255,255,255,0.6)",
+                          }}
+                        >
+                          {student.role}
+                        </span>
+                      </div>
+                    )}
                   </div>
                   <p className="portrait-lastname">{student.lastName.toUpperCase()}</p>
                   <p className="portrait-firstname">{student.firstName} {student.middleName}</p>
                   {student.motto && <p className="portrait-motto">&ldquo;{student.motto}&rdquo;</p>}
-                  {student.role && <p className="portrait-role">{student.role}</p>}
                   {student.instagram && (
                     <p className="portrait-socials">
                       <a

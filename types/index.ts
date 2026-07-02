@@ -18,6 +18,15 @@ export interface GalleryItem {
   tone: string;
 }
 
+/** A gallery photo with its capture time (ms epoch), for chronological display. */
+export interface GalleryPhoto {
+  src: string;
+  /** ms since epoch — from filename timestamp, EXIF, or file mtime. */
+  time: number;
+  /** true when `time` is a real capture date, false when it fell back to file mtime. */
+  dated: boolean;
+}
+
 export type GalleryCategory =
   | "events"
   | "sports"

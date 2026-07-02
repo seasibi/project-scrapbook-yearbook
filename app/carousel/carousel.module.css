@@ -1,0 +1,270 @@
+.stage {
+  --dc-h: clamp(300px, 52vw, 560px);
+  --dc-gap: 1.5rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.4rem;
+  padding: 2rem 0;
+}
+
+.heading {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 1.6rem;
+  letter-spacing: 0.02em;
+  color: var(--ink, #3a2f22);
+  margin: 0;
+  text-align: center;
+  padding-inline: 1rem;
+}
+
+.hint {
+  font-family: var(--font-pixel2), monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft, #6e5a42);
+  margin: 0;
+  text-transform: lowercase;
+  text-align: center;
+  padding-inline: 1rem;
+}
+
+/* the overflow window — native touch scroll blocked so swipe maps to X */
+.viewport {
+  width: 100%;
+  max-width: 1200px;
+  overflow: hidden;
+  touch-action: none;
+  cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.viewport:active {
+  cursor: grabbing;
+}
+
+/* slides are absolutely positioned and moved individually by GSAP (each is
+ * wrapped on its own), so the track is just a fixed-height relative canvas.
+ * No CSS transitions on transform. */
+.track {
+  position: relative;
+  height: var(--dc-h);
+}
+
+.slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: var(--dc-h);
+  /* fallback until JS sets the per-image width from its aspect ratio */
+  width: calc(var(--dc-h) * 0.75);
+  overflow: hidden;
+  border-radius: 4px;
+  background: var(--paper, #fdfaf2);
+  border: 1px solid var(--card-border, #cfc4a8);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.14);
+}
+
+.photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   PhotoCarousel — two dated skins (filmstrip reel + polaroid timeline).
+   Shared engine (components/PhotoCarousel.tsx); classes are prefixed pc*.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.pcStage {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 1.6rem 0;
+}
+
+/* per-variant frame geometry — read by the engine to size photo windows */
+.pcFilmstrip {
+  --pc-h: clamp(240px, 40vw, 380px);
+  --pc-gap: 6px;
+  --pc-padx: 6px;
+  --pc-padtop: 6px;
+  --pc-padbottom: 26px;
+}
+.pcPolaroid {
+  --pc-h: clamp(250px, 42vw, 400px);
+  --pc-gap: 1.4rem;
+  --pc-padx: 11px;
+  --pc-padtop: 11px;
+  --pc-padbottom: 40px;
+}
+
+.pcTitle {
+  margin: 0;
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 1.5rem;
+  letter-spacing: 0.01em;
+  color: var(--ink, #3a2f22);
+  text-align: center;
+  padding-inline: 1rem;
+}
+.pcHint {
+  margin: 0;
+  font-family: var(--font-pixel2), monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft, #6e5a42);
+  text-transform: lowercase;
+  text-align: center;
+  padding-inline: 1rem;
+}
+
+.pcViewport {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  touch-action: none;
+  cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.pcViewport:active {
+  cursor: grabbing;
+}
+
+.pcTrack {
+  position: relative;
+  z-index: 1;
+  height: var(--pc-h);
+}
+
+.pcSlide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: var(--pc-h);
+  width: calc(var(--pc-h) * 0.72); /* fallback until JS sets per-image width */
+}
+
+.pcCard {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* photo window inset by the chrome pads; aspect matches the image so cover
+   shows the whole shot with no crop */
+.pcWrap {
+  position: absolute;
+  left: var(--pc-padx);
+  right: var(--pc-padx);
+  top: var(--pc-padtop);
+  bottom: var(--pc-padbottom);
+  overflow: hidden;
+}
+.pcPhoto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+.pcDate {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--pc-padbottom);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Filmstrip skin ─────────────────────────────────────────────── */
+.pcFilmstrip .pcViewport {
+  background: #241f1a;
+  padding-block: 14px;
+}
+/* sprocket-hole rows top and bottom */
+.pcFilmstrip .pcViewport::before,
+.pcFilmstrip .pcViewport::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 8px;
+  z-index: 2;
+  pointer-events: none;
+  background-image: radial-gradient(
+    circle,
+    #efe7d6 0 2.6px,
+    transparent 3px
+  );
+  background-size: 15px 8px;
+  background-position: center;
+}
+.pcFilmstrip .pcViewport::before {
+  top: 3px;
+}
+.pcFilmstrip .pcViewport::after {
+  bottom: 3px;
+}
+.pcFilmstrip .pcWrap {
+  border-radius: 1px;
+  background: #000;
+}
+.pcFilmstrip .pcDate {
+  font-family: var(--font-pixel2), monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.06em;
+  color: #d9cbb0;
+}
+
+/* ── Polaroid timeline skin ─────────────────────────────────────── */
+.pcPolaroid .pcViewport {
+  background: transparent;
+  padding-block: 20px;
+}
+/* the dotted timeline thread running behind the polaroids */
+.pcPolaroid .pcViewport::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 46%;
+  border-top: 2px dotted var(--card-border, #cfc4a8);
+  z-index: 0;
+}
+.pcPolaroid .pcCard {
+  background: #fdfbf4;
+  border: 1px solid #e7ddc8;
+  box-shadow: 0 6px 16px rgba(58, 47, 34, 0.18);
+}
+.pcPolaroid .pcWashi {
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  width: 46px;
+  height: 18px;
+  transform: translateX(-50%) rotate(-3deg);
+  background: rgba(127, 157, 176, 0.5);
+  border-left: 1px dashed rgba(255, 255, 255, 0.4);
+  border-right: 1px dashed rgba(255, 255, 255, 0.4);
+  z-index: 3;
+}
+.pcPolaroid .pcDate {
+  font-family: var(--font-pixel), var(--font-sans), cursive;
+  font-size: 1.05rem;
+  color: var(--ink-soft, #6e5a42);
+}

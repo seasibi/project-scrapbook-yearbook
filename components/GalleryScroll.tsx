@@ -1,17 +1,20 @@
 "use client";
 
 import { Fragment, useEffect, useRef, useState } from "react";
+import type { GalleryPhoto } from "@/types";
 
 /**
- * Cinematic long-scroll gallery: three full-viewport scroll chapters laid
- * out as scattered scrapbook collages (tilted polaroids, film strips, washi
- * tape, doodles), mirroring the three bands of the Canva gallery design.
- * Reveal is driven by IntersectionObserver (threshold 0.2) — no scroll
- * listeners; each chapter animates in once (data-animated="true").
+ * Cinematic long-scroll gallery: full-viewport scroll chapters laid out as
+ * scattered scrapbook collages (tilted polaroids, film strips, washi tape,
+ * doodles), mirroring the Canva gallery design. Reveal is driven by
+ * IntersectionObserver (threshold 0.2) — no scroll listeners; each chapter
+ * animates in once (data-animated="true").
  *
- * Adding a 4th/5th chapter = adding one entry to CHAPTERS, nothing else.
- * Each placeholder is labelled (img1…img17) so real photos can be swapped
- * in later by matching the label.
+ * Photos are supplied by the caller as an already-sorted `GalleryPhoto[]`
+ * slice (see YearbookShell — the gallery section is one continuous
+ * oldest→recent timeline split across frame/carousel bands) and assigned to
+ * each chapter's pieces positionally, in authored order. `chapterIds` lets a
+ * single caller render just a subset of CHAPTERS (e.g. chapter 1 alone).
  */
 
 type PieceKind = "polaroid" | "photo" | "note" | "filmstrip" | "tiktok";
@@ -47,111 +50,132 @@ interface Chapter {
 const CHAPTERS: Chapter[] = [
   {
     id: "1",
-    // Labels run sequentially across the whole gallery (chapter 1: 1–13 + vid1).
-    // filmstrip img1–4 · img5 (large) · img6 · img7 · img8 · vid1 · img9 · img10
-    // bottom row: img11 · img12 · img13
+    // 13 photo slots, reorganized to eliminate overlaps and maximize space.
+    // Row 1 (top): 4 filmstrip frames · large photo. Row 2: 3 photos spaced.
+    // Row 3: 2 photos. Row 4: 4 photos across the bottom.
     pieces: [
-      { label: "img1",  kind: "filmstrip", x: 0,  y: 0,  w: 22, rot: 0,  frames: ["img1","img2","img3","img4"] },
-      { label: "img5",  kind: "photo",     x: 32, y: 0,  w: 42, rot: 2 },
-      { label: "img6",  kind: "polaroid",  x: 72, y: 3,  w: 26, rot: -2, tape: "plain" },
-      { label: "img7",  kind: "polaroid",  x: 24, y: 30, w: 21, rot: -4, tape: "plain" },
-      { label: "img8",  kind: "photo",     x: 0,  y: 44, w: 34, rot: -1 },
-      { label: "vid1",  kind: "tiktok",    x: 43, y: 35, w: 25, rot: 2 },
-      { label: "img9",  kind: "polaroid",  x: 72, y: 26, w: 26, rot: 2 },
-      { label: "img10", kind: "polaroid",  x: 72, y: 48, w: 26, rot: -2 },
-      { label: "img11", kind: "polaroid",  x: 2,  y: 76, w: 26, rot: 3 },
-      { label: "img12", kind: "polaroid",  x: 37, y: 77, w: 27, rot: -2, tape: "plain" },
-      { label: "img13", kind: "polaroid",  x: 71, y: 76, w: 25, rot: 4 },
+      { label: "img1",  kind: "filmstrip", x: 1,  y: 2,  w: 20, rot: 0,  frames: ["img1","img2","img3","img4"] },
+      { label: "img5",  kind: "photo",     x: 27, y: 0,  w: 40, rot: 2 },
+      { label: "img6",  kind: "polaroid",  x: 72, y: 5,  w: 24, rot: -2, tape: "plain" },
+      { label: "img7",  kind: "polaroid",  x: 5,  y: 50, w: 20, rot: -4, tape: "plain" },
+      { label: "img8",  kind: "photo",     x: 32, y: 38, w: 32, rot: -1 },
+      { label: "img9",  kind: "polaroid",  x: 70, y: 38, w: 25, rot: 2 },
+      { label: "img10", kind: "polaroid",  x: 1,  y: 75, w: 22, rot: -2 },
+      { label: "img11", kind: "polaroid",  x: 27, y: 76, w: 22, rot: 3 },
+      { label: "img12", kind: "polaroid",  x: 50, y: 75, w: 23, rot: -2, tape: "plain" },
+      { label: "img13", kind: "polaroid",  x: 77, y: 76, w: 20, rot: 4 },
     ],
     doodles: [
-      { label: "scrap1", x: 91, y: 25, w: 7, rot: 6 },
-      { label: "scrap2", x: 28, y: 88, w: 8, rot: 3 },
-      { label: "scrap3", x: 62, y: 87, w: 7, rot: -4 },
+      { label: "scrap1", x: 88, y: 35, w: 7, rot: 6 },
+      { label: "scrap2", x: 15, y: 88, w: 8, rot: 3 },
+      { label: "scrap3", x: 65, y: 89, w: 7, rot: -4 },
     ],
   },
   {
     id: "2",
-    // chapter 2: img14–20.  Row 1: img14 · img15 · img16 · img17 (note)
-    // Row 2 (bottom ~46%): img18 · img19 · img20
+    // 7 photo slots, reorganized. Row 1: 4 pieces spaced. Row 2: 3 pieces across.
     pieces: [
-      { label: "img14", kind: "polaroid", x: 2,  y: 11, w: 23, rot: -3, tape: "plain" },
-      { label: "img15", kind: "photo",    x: 29, y: 13, w: 25, rot: 2,  clip: true },
-      { label: "img16", kind: "polaroid", x: 53, y: 6,  w: 35, rot: -1 },
-      { label: "img17", kind: "note",     x: 57, y: 41, w: 32, rot: 3 },
-      { label: "img18", kind: "polaroid", x: 1,  y: 46, w: 27, rot: 2 },
-      { label: "img19", kind: "photo",    x: 28, y: 46, w: 30, rot: -2 },
-      { label: "img20", kind: "polaroid", x: 70, y: 64, w: 27, rot: 3 },
+      { label: "img14", kind: "polaroid", x: 2,  y: 8,  w: 21, rot: -3, tape: "plain" },
+      { label: "img15", kind: "photo",    x: 28, y: 10, w: 24, rot: 2,  clip: true },
+      { label: "img16", kind: "polaroid", x: 57, y: 5,  w: 32, rot: -1 },
+      { label: "img17", kind: "note",     x: 5,  y: 32, w: 28, rot: 3 },
+      { label: "img18", kind: "polaroid", x: 38, y: 34, w: 24, rot: 2 },
+      { label: "img19", kind: "photo",    x: 67, y: 32, w: 30, rot: -2 },
+      { label: "img20", kind: "polaroid", x: 2,  y: 58, w: 25, rot: 3 },
     ],
     doodles: [
-      { label: "scrap4", x: 4,  y: 84, w: 9, rot: 4 },
-      { label: "scrap5", x: 42, y: 85, w: 8, rot: -5 },
-      { label: "scrap6", x: 74, y: 83, w: 9, rot: 6 },
+      { label: "scrap4", x: 32, y: 85, w: 9, rot: 4 },
+      { label: "scrap5", x: 70, y: 82, w: 8, rot: -5 },
+      { label: "scrap6", x: 8,  y: 26, w: 9, rot: 6 },
     ],
   },
   {
     id: "3",
-    // chapter 3: img21–30.  Row 1: img21 · img22 · img23 · filmstrip img24–27
-    // Row 2 (bottom ~46%): img28 · img29 · img30
+    // 10 photo slots, reorganized. Row 1: 3 polaroids + filmstrip. Row 2: 4 photos.
     pieces: [
-      { label: "img21", kind: "polaroid",  x: 1,  y: 3,  w: 23, rot: -4, tape: "heart" },
-      { label: "img22", kind: "polaroid",  x: 27, y: 0,  w: 31, rot: 4,  tape: "plain" },
-      { label: "img23", kind: "polaroid",  x: 60, y: 3,  w: 23, rot: -2 },
-      { label: "img24", kind: "filmstrip", x: 83, y: 0,  w: 16, rot: 0,  frames: ["img24","img25","img26","img27"] },
-      { label: "img28", kind: "photo",     x: 1,  y: 46, w: 30, rot: 2 },
-      { label: "img29", kind: "polaroid",  x: 34, y: 48, w: 27, rot: -3, tape: "plain" },
-      { label: "img30", kind: "polaroid",  x: 66, y: 46, w: 29, rot: 2 },
+      { label: "img21", kind: "polaroid",  x: 2,  y: 2,  w: 21, rot: -4, tape: "heart" },
+      { label: "img22", kind: "polaroid",  x: 28, y: 0,  w: 28, rot: 4,  tape: "plain" },
+      { label: "img23", kind: "polaroid",  x: 61, y: 3,  w: 20, rot: -2 },
+      { label: "img24", kind: "filmstrip", x: 1,  y: 42, w: 18, rot: 0,  frames: ["img24","img25","img26","img27"] },
+      { label: "img28", kind: "photo",     x: 24, y: 43, w: 28, rot: 2 },
+      { label: "img29", kind: "polaroid",  x: 55, y: 45, w: 20, rot: -3, tape: "plain" },
+      { label: "img30", kind: "polaroid",  x: 77, y: 47, w: 21, rot: 2 },
     ],
     doodles: [
-      { label: "scrap7", x: 22, y: 84, w: 9, rot: -4 },
-      { label: "scrap8", x: 55, y: 85, w: 9, rot: 5 },
+      { label: "scrap7", x: 48, y: 14, w: 9, rot: -4 },
+      { label: "scrap8", x: 12, y: 76, w: 9, rot: 5 },
     ],
   },
 ];
 
-const GALLERY_EXTS = ["jpg", "jpeg", "png", "webp", "avif"];
+/** how many photos a piece consumes from the sequential assignment pass */
+function slotCount(piece: Piece): number {
+  if (piece.kind === "tiktok") return 0;
+  if (piece.kind === "filmstrip") return piece.frames?.length ?? 4;
+  return 1;
+}
 
-/* TEMPORARY: shows the filename badge on every frame so you know which photo
- * goes where (drop e.g. img5.jpg into public/gallery/). Set to false — or
- * delete the SHOW_LABELS references — once all images are placed. */
+type AssignedPiece = Piece & { srcs: string[] };
+type AssignedChapter = Omit<Chapter, "pieces"> & { pieces: AssignedPiece[] };
+
+/**
+ * Walks chapters' pieces in authored order, consuming `photos` sequentially
+ * and attaching each piece's resolved src(s). Positional, not label-based —
+ * whichever chronological slice the caller passes fills the layout in order.
+ */
+function assignPhotos(
+  chapters: Chapter[],
+  photos: GalleryPhoto[]
+): AssignedChapter[] {
+  let idx = 0;
+  return chapters.map((chapter) => ({
+    ...chapter,
+    pieces: chapter.pieces.map((piece) => {
+      const count = slotCount(piece);
+      const srcs = photos.slice(idx, idx + count).map((p) => p.src);
+      idx += count;
+      return { ...piece, srcs };
+    }),
+  }));
+}
+
+function filenameOf(src?: string): string | undefined {
+  return src?.split("/").pop();
+}
+
+/* TEMPORARY: shows the resolved filename on every frame for debugging which
+ * photo landed where. Set to false once you're happy with the assignment. */
 const SHOW_LABELS = false;
 
 /**
- * Tries /gallery/<label>.<ext> in order; shows PlaceholderArt until an
- * image loads. Drop photos into public/gallery/ named to match the label
- * (e.g. img1.jpg, img2.png). If no file is found the placeholder stays.
+ * Renders a resolved photo src, falling back to PlaceholderArt while loading
+ * or if the src is missing/fails to load.
  */
-function GalleryPhoto({ label }: { label: string }) {
-  const [src, setSrc] = useState(`/gallery/${label}.${GALLERY_EXTS[0]}`);
-  const [attempt, setAttempt] = useState(0);
+function GalleryPhoto({ src, label }: { src?: string; label?: string }) {
   const [loaded, setLoaded] = useState(false);
+  const [failed, setFailed] = useState(false);
 
-  if (attempt >= GALLERY_EXTS.length) {
+  if (!src || failed) {
     return (
       <>
         <PlaceholderArt />
-        {SHOW_LABELS && <span className="piece-label">{label}</span>}
+        {SHOW_LABELS && label && <span className="piece-label">{label}</span>}
       </>
     );
   }
 
   return (
     <>
-      {SHOW_LABELS && <span className="piece-label">{label}</span>}
+      {SHOW_LABELS && label && <span className="piece-label">{label}</span>}
       {!loaded && <div className="piece-art-wrap"><PlaceholderArt /></div>}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={src}
-        alt={label}
+        alt=""
         className="piece-real-photo"
         style={{ display: loaded ? "block" : "none" }}
         onLoad={() => setLoaded(true)}
-        onError={() => {
-          const next = attempt + 1;
-          if (next < GALLERY_EXTS.length) {
-            setSrc(`/gallery/${label}.${GALLERY_EXTS[next]}`);
-          }
-          setAttempt(next);
-        }}
+        onError={() => setFailed(true)}
       />
     </>
   );
@@ -325,17 +349,28 @@ function ScrapItem({ label }: { label: string }) {
   );
 }
 
-export default function GalleryScroll() {
+export default function GalleryScroll({
+  photos,
+  chapterIds,
+}: {
+  photos: GalleryPhoto[];
+  chapterIds?: string[];
+}) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const inView = useRef<Set<string>>(new Set());
   const [animated, setAnimated] = useState<Set<string>>(new Set());
   const [progress, setProgress] = useState(0);
 
+  const chaptersToRender = chapterIds
+    ? CHAPTERS.filter((c) => chapterIds.includes(c.id))
+    : CHAPTERS;
+  const assignedChapters = assignPhotos(chaptersToRender, photos);
+
   useEffect(() => {
     const root = wrapRef.current;
     if (!root) return;
 
-    const chapters = Array.from(
+    const chapterEls = Array.from(
       root.querySelectorAll<HTMLElement>("[data-gallery-section]")
     );
 
@@ -354,26 +389,26 @@ export default function GalleryScroll() {
             inView.current.delete(id);
           }
         }
-        // progress steps with the deepest chapter currently in view:
-        // chapter 1 → 1/3, chapter 2 → 2/3, chapter 3 → 3/3
-        const deepest = CHAPTERS.reduce(
+        // progress steps with the deepest rendered chapter currently in view
+        const deepest = chaptersToRender.reduce(
           (max, chapter, i) => (inView.current.has(chapter.id) ? i + 1 : max),
           0
         );
-        if (deepest > 0) setProgress(deepest / CHAPTERS.length);
+        if (deepest > 0) setProgress(deepest / chaptersToRender.length);
       },
       { threshold: 0 }
     );
 
-    chapters.forEach((el) => observer.observe(el));
+    chapterEls.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 
   return (
     <div className="gallery-scroll" ref={wrapRef}>
       <div className="gallery-chapters">
-        {CHAPTERS.map((chapter) => (
+        {assignedChapters.map((chapter) => (
           <Fragment key={chapter.id}>
             <section
               className="gallery-chapter"
@@ -410,9 +445,9 @@ export default function GalleryScroll() {
                     <div className="piece-pad">
                       {piece.kind === "filmstrip" ? (
                         <div className="filmstrip-frames">
-                          {(piece.frames ?? [piece.label]).map((frame) => (
-                            <div className="filmstrip-frame" key={frame}>
-                              <GalleryPhoto label={frame} />
+                          {piece.srcs.map((src, fi) => (
+                            <div className="filmstrip-frame" key={`${piece.label}-${fi}`}>
+                              <GalleryPhoto src={src} label={filenameOf(src)} />
                             </div>
                           ))}
                         </div>
@@ -423,7 +458,7 @@ export default function GalleryScroll() {
                         </div>
                       ) : (
                         <div className="piece-photo-area">
-                          <GalleryPhoto label={piece.label} />
+                          <GalleryPhoto src={piece.srcs[0]} label={filenameOf(piece.srcs[0])} />
                         </div>
                       )}
                     </div>
