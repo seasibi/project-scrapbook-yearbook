@@ -1,8 +1,8 @@
 import { getGalleryPhotos } from "@/lib/data";
 import DragCarousel from "@/components/DragCarousel";
 
-export default async function CarouselPage() {
-  const photos = (await getGalleryPhotos()).slice(0, 40).map((p) => p.src);
+export default function CarouselPage() {
+  const photos = getGalleryPhotos().slice(0, 40).map((p) => p.src);
 
   return (
     <main

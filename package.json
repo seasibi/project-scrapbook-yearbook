@@ -5,10 +5,11 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "prebuild": "node scripts/gen-letters-manifest.mjs",
+    "prebuild": "node scripts/gen-letters-manifest.mjs && node scripts/gen-media-manifests.mjs",
     "start": "next start",
     "lint": "eslint",
-    "letters:manifest": "node scripts/gen-letters-manifest.mjs"
+    "letters:manifest": "node scripts/gen-letters-manifest.mjs",
+    "media:manifest": "node scripts/gen-media-manifests.mjs"
   },
   "dependencies": {
     "@libsql/client": "^0.17.3",
